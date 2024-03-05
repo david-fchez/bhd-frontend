@@ -1,0 +1,585 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "AckResponse",
+"language": "GDScript",
+"path": "res://backend/models/ack-response.gd"
+}, {
+"base": "Node",
+"class": "ApiProxy",
+"language": "GDScript",
+"path": "res://backend/api-proxy.gd"
+}, {
+"base": "Reference",
+"class": "BhdRequestTypes",
+"language": "GDScript",
+"path": "res://backend/models/request-types.gd"
+}, {
+"base": "Node",
+"class": "BoxEnterRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-enter-request.gd"
+}, {
+"base": "Node",
+"class": "BoxEnterResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/box-enter-response.gd"
+}, {
+"base": "Control",
+"class": "BoxGameItem",
+"language": "GDScript",
+"path": "res://scenes/BoxGameItem.gd"
+}, {
+"base": "Node",
+"class": "BoxInfo",
+"language": "GDScript",
+"path": "res://backend/models/game/box-info.gd"
+}, {
+"base": "Node",
+"class": "BoxJoinRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-join-request.gd"
+}, {
+"base": "Reference",
+"class": "BoxJoinResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/box-join-response.gd"
+}, {
+"base": "Node",
+"class": "BoxNewAvailableRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-new-available-request.gd"
+}, {
+"base": "Node",
+"class": "BoxPhysicsDeliveryRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-physics-delivery-request.gd"
+}, {
+"base": "Node",
+"class": "BoxPlayDoneRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-play-done.gd"
+}, {
+"base": "Node",
+"class": "BoxPlayRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-play-request.gd"
+}, {
+"base": "Node",
+"class": "BoxPlayerEntry",
+"language": "GDScript",
+"path": "res://backend/models/game/box-player-entry.gd"
+}, {
+"base": "Node",
+"class": "BoxPlayerListUpdateRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-player-list-update-request.gd"
+}, {
+"base": "Node",
+"class": "BoxPlayerSettingsUpdate",
+"language": "GDScript",
+"path": "res://backend/models/game/box-player-settings-update-request.gd"
+}, {
+"base": "Node",
+"class": "BoxShowLooserRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-show-looser-request.gd"
+}, {
+"base": "Node",
+"class": "BoxShowWinnerRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-show-winner-request.gd"
+}, {
+"base": "Node",
+"class": "BoxSpeedUpRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-speedup-request.gd"
+}, {
+"base": "Node",
+"class": "BoxSpeedUpVoteRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-speed-up-vote-request.gd"
+}, {
+"base": "Node",
+"class": "BoxUpdateRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/box-update-request.gd"
+}, {
+"base": "Node",
+"class": "BroadcastTransactionRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/broadcast-transaction-request.gd"
+}, {
+"base": "Node",
+"class": "ClientReadyForPlayRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/client-ready-for-play-request.gd"
+}, {
+"base": "Node",
+"class": "ConsoleLog",
+"language": "GDScript",
+"path": "res://backend/utils/console-log.gd"
+}, {
+"base": "Node",
+"class": "ErrorResponse",
+"language": "GDScript",
+"path": "res://backend/models/error-response.gd"
+}, {
+"base": "Node",
+"class": "GameClient",
+"language": "GDScript",
+"path": "res://backend/game-client.gd"
+}, {
+"base": "Node",
+"class": "GameState",
+"language": "GDScript",
+"path": "res://scripts/GameState.gd"
+}, {
+"base": "Node",
+"class": "GetBalanceRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-balance-request.gd"
+}, {
+"base": "Node",
+"class": "GetBalanceResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-balance-response.gd"
+}, {
+"base": "Node",
+"class": "GetBoxesRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/get-boxes-request.gd"
+}, {
+"base": "Node",
+"class": "GetBoxesResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/get-boxes-response.gd"
+}, {
+"base": "Reference",
+"class": "GetTransactionRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-transaction-request.gd"
+}, {
+"base": "Node",
+"class": "GetTransactionResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-transaction-response.gd"
+}, {
+"base": "Node",
+"class": "GetTransactionsRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-transactions-request.gd"
+}, {
+"base": "Node",
+"class": "GetTransactionsResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-transactions-response.gd"
+}, {
+"base": "Node",
+"class": "GetUxtosRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-uxtos-request.gd"
+}, {
+"base": "Node",
+"class": "GetUxtosResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/get-uxtos-response.gd"
+}, {
+"base": "Node",
+"class": "GuidUtils",
+"language": "GDScript",
+"path": "res://data_types/uuid.gd"
+}, {
+"base": "Node",
+"class": "Hex",
+"language": "GDScript",
+"path": "res://backend/utils/hex.gd"
+}, {
+"base": "Node",
+"class": "JsonHelper",
+"language": "GDScript",
+"path": "res://backend/utils/json-helper.gd"
+}, {
+"base": "Reference",
+"class": "LocalWalletRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/local-wallet-request.gd"
+}, {
+"base": "Reference",
+"class": "LocalWalletResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/local-wallet-response.gd"
+}, {
+"base": "Reference",
+"class": "LoginRequest",
+"language": "GDScript",
+"path": "res://backend/models/login-request.gd"
+}, {
+"base": "Reference",
+"class": "LoginResponse",
+"language": "GDScript",
+"path": "res://backend/models/login-response.gd"
+}, {
+"base": "Node",
+"class": "Main",
+"language": "GDScript",
+"path": "res://main/main.gd"
+}, {
+"base": "Node",
+"class": "MempoolFilterRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/mempool-filter-request.gd"
+}, {
+"base": "Node",
+"class": "PduContainer",
+"language": "GDScript",
+"path": "res://backend/pdu-container.gd"
+}, {
+"base": "Node",
+"class": "PlayerBoxSettings",
+"language": "GDScript",
+"path": "res://backend/models/game/player-box-settings.gd"
+}, {
+"base": "Node",
+"class": "PlayerInfo",
+"language": "GDScript",
+"path": "res://backend/models/player-info.gd"
+}, {
+"base": "Reference",
+"class": "RegisterRequest",
+"language": "GDScript",
+"path": "res://backend/models/register-request.gd"
+}, {
+"base": "Reference",
+"class": "RoundData",
+"language": "GDScript",
+"path": "res://data_types/round_data.gd"
+}, {
+"base": "Node",
+"class": "SendCoinsRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/send-coin-request.gd"
+}, {
+"base": "Node",
+"class": "SendCoinsResponse",
+"language": "GDScript",
+"path": "res://backend/models/wallet/send-coins-response.gd"
+}, {
+"base": "Reference",
+"class": "SettingsManager",
+"language": "GDScript",
+"path": "res://scripts/SettingsManager.gd"
+}, {
+"base": "Node",
+"class": "SphereEnterRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-enter-request.gd"
+}, {
+"base": "Node",
+"class": "SphereEnterResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-enter-response.gd"
+}, {
+"base": "Node",
+"class": "SphereInfo",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-info.gd"
+}, {
+"base": "Node",
+"class": "SphereInfoRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-info-request.gd"
+}, {
+"base": "Node",
+"class": "SphereInfoResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-info-response.gd"
+}, {
+"base": "Node",
+"class": "SphereJoinRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-join-request.gd"
+}, {
+"base": "Node",
+"class": "SphereJoinResponse",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-join-response.gd"
+}, {
+"base": "Node",
+"class": "SphereUpdateRequest",
+"language": "GDScript",
+"path": "res://backend/models/game/sphere-update-request.gd"
+}, {
+"base": "Node",
+"class": "TcpClient",
+"language": "GDScript",
+"path": "res://backend/tcp.gd"
+}, {
+"base": "Reference",
+"class": "TransactionInMemPoolRequest",
+"language": "GDScript",
+"path": "res://backend/models/wallet/transaction-in-mempool-request.gd"
+}, {
+"base": "Reference",
+"class": "TreeHelper",
+"language": "GDScript",
+"path": "res://scenes/TreeHelper.gd"
+}, {
+"base": "Node",
+"class": "Tx",
+"language": "GDScript",
+"path": "res://backend/models/tx.gd"
+}, {
+"base": "Node",
+"class": "TxIn",
+"language": "GDScript",
+"path": "res://backend/models/tx-in.gd"
+}, {
+"base": "Node",
+"class": "TxOut",
+"language": "GDScript",
+"path": "res://backend/models/tx-out.gd"
+}, {
+"base": "Reference",
+"class": "TypedList",
+"language": "GDScript",
+"path": "res://backend/utils/typed-list.gd"
+}, {
+"base": "Node",
+"class": "UxtoTransaction",
+"language": "GDScript",
+"path": "res://backend/models/uxto-transaction.gd"
+}, {
+"base": "Node",
+"class": "WalletClient",
+"language": "GDScript",
+"path": "res://backend/wallet-client.gd"
+}, {
+"base": "Reference",
+"class": "ball",
+"language": "GDScript",
+"path": "res://data_types/ball.gd"
+}, {
+"base": "Reference",
+"class": "box_game",
+"language": "GDScript",
+"path": "res://data_types/box_game.gd"
+}, {
+"base": "Reference",
+"class": "byte_helper",
+"language": "GDScript",
+"path": "res://data_types/byte_helper.gd"
+}, {
+"base": "Reference",
+"class": "position",
+"language": "GDScript",
+"path": "res://data_types/position.gd"
+} ]
+_global_script_class_icons={
+"AckResponse": "",
+"ApiProxy": "",
+"BhdRequestTypes": "",
+"BoxEnterRequest": "",
+"BoxEnterResponse": "",
+"BoxGameItem": "",
+"BoxInfo": "",
+"BoxJoinRequest": "",
+"BoxJoinResponse": "",
+"BoxNewAvailableRequest": "",
+"BoxPhysicsDeliveryRequest": "",
+"BoxPlayDoneRequest": "",
+"BoxPlayRequest": "",
+"BoxPlayerEntry": "",
+"BoxPlayerListUpdateRequest": "",
+"BoxPlayerSettingsUpdate": "",
+"BoxShowLooserRequest": "",
+"BoxShowWinnerRequest": "",
+"BoxSpeedUpRequest": "",
+"BoxSpeedUpVoteRequest": "",
+"BoxUpdateRequest": "",
+"BroadcastTransactionRequest": "",
+"ClientReadyForPlayRequest": "",
+"ConsoleLog": "",
+"ErrorResponse": "",
+"GameClient": "",
+"GameState": "",
+"GetBalanceRequest": "",
+"GetBalanceResponse": "",
+"GetBoxesRequest": "",
+"GetBoxesResponse": "",
+"GetTransactionRequest": "",
+"GetTransactionResponse": "",
+"GetTransactionsRequest": "",
+"GetTransactionsResponse": "",
+"GetUxtosRequest": "",
+"GetUxtosResponse": "",
+"GuidUtils": "",
+"Hex": "",
+"JsonHelper": "",
+"LocalWalletRequest": "",
+"LocalWalletResponse": "",
+"LoginRequest": "",
+"LoginResponse": "",
+"Main": "",
+"MempoolFilterRequest": "",
+"PduContainer": "",
+"PlayerBoxSettings": "",
+"PlayerInfo": "",
+"RegisterRequest": "",
+"RoundData": "",
+"SendCoinsRequest": "",
+"SendCoinsResponse": "",
+"SettingsManager": "",
+"SphereEnterRequest": "",
+"SphereEnterResponse": "",
+"SphereInfo": "",
+"SphereInfoRequest": "",
+"SphereInfoResponse": "",
+"SphereJoinRequest": "",
+"SphereJoinResponse": "",
+"SphereUpdateRequest": "",
+"TcpClient": "",
+"TransactionInMemPoolRequest": "",
+"TreeHelper": "",
+"Tx": "",
+"TxIn": "",
+"TxOut": "",
+"TypedList": "",
+"UxtoTransaction": "",
+"WalletClient": "",
+"ball": "",
+"box_game": "",
+"byte_helper": "",
+"position": ""
+}
+
+[application]
+
+config/name="BHD"
+run/main_scene="res://main/main.tscn"
+boot_splash/show_image=false
+boot_splash/image="res://assets/images/empty.png"
+config/icon="res://assets/icons/android-chrome-192x192.png"
+config/windows_native_icon="res://assets/icons/favicon.ico"
+
+[autoload]
+
+Global="*res://scripts/Global.gd"
+LoadingDialog="*res://dialogs/LoadingDialog.tscn"
+ErrorDialog="*res://dialogs/ErrorDialog.tscn"
+ConfirmDialog="*res://dialogs/ConfirmDialog.tscn"
+Settings="*res://scenes/Settings.tscn"
+GameResult="*res://dialogs/GameResult.tscn"
+SnackBar="*res://dialogs/SnackBar.tscn"
+InfoDialog="*res://dialogs/InfoDialog.tscn"
+
+[display]
+
+window/size/width=1920
+window/size/height=1080
+window/size/resizable=false
+window/size/fullscreen=true
+window/handheld/orientation="sensor"
+mouse_cursor/custom_image="res://assets/images/custom_cursor.png"
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+
+[gdnative]
+
+singletons=[  ]
+
+[global]
+
+scene=false
+
+[input]
+
+ui_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777231,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":14,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+ui_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777233,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":15,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+ui_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777232,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":12,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+ui_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777234,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":0,"button_index":13,"pressure":0.0,"pressed":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+cam_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":87,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+cam_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+cam_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+cam_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":68,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+cam_zoom_in={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":4,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+cam_zoom_out={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":5,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+
+[network]
+
+ssl/certificates="res://backend/tls.crt"
+limits/debugger_stdout/max_chars_per_second=2222048
+
+[physics]
+
+common/enable_pause_aware_picking=true
+3d/active_soft_world=false
+3d/godot_physics/use_bvh=false
+3d/default_gravity=0.0
+3d/default_gravity_vector=Vector3( 0, 0, 0 )
+3d/default_linear_damp=0.0
+3d/default_angular_damp=0.0
+common/physics_interpolation=true
+
+[rendering]
+
+quality/filters/anisotropic_filter_level=8
+environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_environment="res://default_env.tres"

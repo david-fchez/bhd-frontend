@@ -1,0 +1,278 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://assets/images/hexagon_grid.png" type="Texture" id=1]
+[ext_resource path="res://scenes/Ball.gd" type="Script" id=2]
+[ext_resource path="res://assets/images/particle_texture/spark_04.png" type="Texture" id=5]
+[ext_resource path="res://models/HealthBar3D.tscn" type="PackedScene" id=6]
+
+[sub_resource type="PhysicsMaterial" id=1]
+friction = 0.0
+bounce = 1.0
+
+[sub_resource type="SphereMesh" id=2]
+radius = 0.5
+height = 1.0
+
+[sub_resource type="Shader" id=3]
+code = "shader_type spatial;
+render_mode depth_draw_opaque, cull_disabled, ambient_light_disabled, blend_add, shadows_disabled;
+
+uniform vec4 color : hint_color;
+uniform float fresnel_power = 1.0;
+uniform float edge_intensity = 2.0;
+uniform float fill_amount : hint_range(0, 1) = 0.1;
+
+uniform float pulsing_strength = 0.25;
+uniform float pulsing_speed = 1.0;
+
+uniform float scanline_period = 0.5;
+uniform float scanline_width : hint_range(0, 0.49) = 0.1;
+uniform float scanline_intensity = 0.35;
+
+uniform float pattern_scroll_speed = 0.025;
+uniform vec2 pattern_uv_offset = vec2(6.0, 3.0);
+
+uniform float emission_intensity : hint_range(0.0, 15.0, 0.1) = 2.0;
+
+uniform sampler2D pattern_texture : hint_albedo;
+
+void vertex() {
+	float pulse_distance = ((sin(TIME * pulsing_speed) * 0.1)) * pulsing_strength;
+	VERTEX += NORMAL * pulse_distance;
+}
+
+void fragment() {
+	//Create a fresnel effect from the NORMAL and VIEW vectors.
+	float fresnel = pow(1.0 - dot(NORMAL, VIEW), fresnel_power) * edge_intensity;
+	
+	//Add back transparency in the middle
+	fresnel = fresnel + fill_amount;
+	
+	//Get the raw linear depth from the depth texture into a  [-1, 1] range
+	float depth = texture(DEPTH_TEXTURE, SCREEN_UV).r * 2.0 - 1.0;
+	//Recreate linear depth of the intersecting geometry using projection matrix, and subtract the vertex of the sphere
+	depth = PROJECTION_MATRIX[3][2] / (depth + PROJECTION_MATRIX[2][2]) + VERTEX.z;
+	//Intensity intersection effect
+	depth = pow(1.0 - clamp(depth, 0, 1), fresnel_power) * edge_intensity;
+	
+	//Calculate final alpha using fresnel and depth joined together
+	fresnel = fresnel + depth;
+	
+	//Calculate UV scrolling pattern
+	float scrolling_time = TIME * pattern_scroll_speed;
+	vec4 pattern = texture(pattern_texture, (UV * pattern_uv_offset) + vec2(scrolling_time));
+	
+	//Use pattern to cut holes in alpha
+	fresnel *= pattern.r;
+	
+	float uv_offset = mod(-TIME * scanline_period, 2.0) - 1.0;
+	float scanline = smoothstep(0.5 - scanline_width, 0.5, UV.y + uv_offset) * (1.0 - smoothstep(0.5, 0.5 + scanline_width, UV.y + uv_offset)) * pattern.r;
+	
+	//Apply final color
+	ALBEDO = vec3(0);
+	EMISSION = color.rgb;
+	ALPHA = smoothstep(0.0, 1.0, fresnel + scanline * scanline_intensity);
+}"
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
+shader_param/color = Color( 0.117647, 0.27451, 0.878431, 0.615686 )
+shader_param/fresnel_power = 0.464
+shader_param/edge_intensity = 0.849
+shader_param/fill_amount = 0.401
+shader_param/pulsing_strength = 0.0
+shader_param/pulsing_speed = 1.0
+shader_param/scanline_period = 0.5
+shader_param/scanline_width = 0.34
+shader_param/scanline_intensity = 0.35
+shader_param/pattern_scroll_speed = 0.025
+shader_param/pattern_uv_offset = Vector2( 3, 1 )
+shader_param/emission_intensity = 2.9
+shader_param/pattern_texture = ExtResource( 1 )
+
+[sub_resource type="SphereMesh" id=8]
+radial_segments = 256
+rings = 128
+
+[sub_resource type="Shader" id=9]
+code = "shader_type spatial;
+render_mode blend_mix;
+
+uniform vec4 base_color_shadow : hint_color = vec4(0.5, 0.0, 0.0, 1.0);
+uniform vec4 base_color_highlight : hint_color = vec4(0.0, 0.5, 0.0, 1.0);
+uniform float base_color_blend : hint_range(0.1, 2.0, 0.05) = 1.2;
+uniform float color_modulate_frequency : hint_range(0.1, 10.0, 0.1) = 1.0;
+uniform float noise_displacement : hint_range(0.1, 1, 0.01) = 0.3;
+uniform float noise_scale : hint_range(1, 20, 0.1) = 7.0;
+uniform float noise_time_scale : hint_range(0.1, 10, 0.1) = 1.0;
+uniform float alpha_distance_min : hint_range(0.5, 1.5, 0.01) = 1.08;
+uniform float alpha_distance_max : hint_range(1.0, 2.0, 0.01) = 1.6;
+uniform float alpha_time_scale : hint_range(0.1, 10, 0.1) = 1.0;
+uniform float emission_intensity : hint_range(0.0, 15.0, 0.1) = 2.0;
+uniform float highlight_intensity : hint_range(0.1, 10.0, 0.1) = 3.0;
+
+varying vec3 normal_norm;
+varying vec3 vertex_local;
+varying float vertex_d;
+
+// Generic 3-in-1-out noise function from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+vec4 mod289(vec4 x) {
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+vec4 perm(vec4 x) {
+	return mod289(((x * 34.0) + 1.0) * x);
+}
+
+float noise(vec3 p) {
+	vec3 a = floor(p);
+	vec3 d = p - a;
+	d = d * d * (3.0 - 2.0 * d);
+
+	vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+	vec4 k1 = perm(b.xyxy);
+	vec4 k2 = perm(k1.xyxy + b.zzww);
+
+	vec4 c = k2 + a.zzzz;
+	vec4 k3 = perm(c);
+	vec4 k4 = perm(c + 1.0);
+
+	vec4 o1 = fract(k3 * (1.0 / 41.0));
+	vec4 o2 = fract(k4 * (1.0 / 41.0));
+
+	vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+	vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+
+	return o4.y * d.y + o4.x * (1.0 - d.y);
+}
+
+// Simple function used for generating \"waves\" for modulating the vertex displacement over time
+// Creates different waves for x, y and z (w1, w2 and w3) + one constant rotation around one axis
+vec3 wave(float time) {
+	float w1 = 0.134 * cos(2.874 * time) + 0.536 * sin(3.574 * time);
+	float w2 = 0.446 * sin(2.567 * time) + 0.357 * cos(3.367 * time) + 5.746 * time;
+	float w3 = 0.364 * cos(2.745 * time) + 0.256 * sin(3.645 * time);
+	return vec3(w1, w2, w3);
+}
+
+void vertex() {
+	// Getting the normalized normal vector (pointing out of the sphere) in order to displace the vertices along the axis of the normal
+	normal_norm = normalize(NORMAL);
+	VERTEX += noise_displacement * noise(VERTEX * noise_scale + wave(noise_time_scale * TIME)) * normal_norm;
+	
+	// Computing distance from new vertex location to center, will be used in fragment shader
+	vertex_local = VERTEX;
+	vertex_d = distance(vertex_local, vec3(0.0));
+}
+
+void fragment() {
+	// Animating transparency (alpha) based on distance from sphere center using periodic variations in the treshold
+	float alpha_distance_min_varying = alpha_distance_min + 0.05 * alpha_distance_min * cos(2.32 * alpha_time_scale * TIME) + 0.05 * alpha_distance_min * cos(5.17 * alpha_time_scale * TIME) + 0.04 * alpha_distance_min * sin(7.32 * alpha_time_scale * TIME);
+	ALPHA = smoothstep(alpha_distance_min_varying, alpha_distance_max, vertex_d);
+	
+	// Setting the base colors of the orb, blending shadow and highlight color by using smoothstep and vertex distance from center
+	ALBEDO = base_color_shadow.rgb + (base_color_highlight.rgb * smoothstep(base_color_blend - base_color_blend * 0.25, base_color_blend + base_color_blend * 0.25, vertex_d));
+	
+	// Animating (modulating) the base color using small periodic variations in red, green and blue channels 
+	ALBEDO += vec3(0.067 * sin(5.346 * color_modulate_frequency * TIME), 0.058 * cos(7.346 * color_modulate_frequency * TIME), 0.073 * sin(3.346 * color_modulate_frequency * TIME));
+	
+	// Adjusting highlight intensity based on vertex distance from center. Larger values for highlight_intensity will darken areas with vertex_d < 1 and brighten areas with vertex_d > 1
+	ALBEDO *= pow(vertex_d, highlight_intensity);
+	
+	// Making the material emissive by multiplying the albedo by an intensity factor
+	EMISSION = emission_intensity * ALBEDO;
+}"
+
+[sub_resource type="ShaderMaterial" id=14]
+shader = SubResource( 9 )
+shader_param/base_color_shadow = Color( 0.113725, 0.670588, 0.941176, 1 )
+shader_param/base_color_highlight = Color( 0.196078, 0.321569, 0.882353, 1 )
+shader_param/base_color_blend = 1.25
+shader_param/color_modulate_frequency = 4.8
+shader_param/noise_displacement = 0.38
+shader_param/noise_scale = 7.0
+shader_param/noise_time_scale = 1.0
+shader_param/alpha_distance_min = 1.08
+shader_param/alpha_distance_max = 1.6
+shader_param/alpha_time_scale = 0.4
+shader_param/emission_intensity = 3.6
+shader_param/highlight_intensity = 7.7
+
+[sub_resource type="SpatialMaterial" id=16]
+flags_transparent = true
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0.788235, 0.8, 0.952941, 1 )
+albedo_texture = ExtResource( 5 )
+
+[sub_resource type="ParticlesMaterial" id=17]
+gravity = Vector3( 0, 0, 0 )
+angular_velocity = 16.74
+angular_velocity_random = 1.0
+angle = 360.0
+angle_random = 1.0
+color = Color( 0.2, 0.227451, 0.745098, 1 )
+
+[sub_resource type="QuadMesh" id=18]
+
+[sub_resource type="ViewportTexture" id=19]
+viewport_path = NodePath("Viewport")
+
+[sub_resource type="SphereShape" id=20]
+margin = 0.001
+radius = 0.48
+
+[node name="Ball" type="RigidBody"]
+input_ray_pickable = false
+mass = 0.01
+physics_material_override = SubResource( 1 )
+gravity_scale = 0.0
+custom_integrator = true
+contacts_reported = 1
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+script = ExtResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 2 )
+material/0 = SubResource( 4 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="."]
+transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0 )
+visible = false
+mesh = SubResource( 8 )
+material/0 = SubResource( 14 )
+
+[node name="OmniLight" type="OmniLight" parent="."]
+visible = false
+light_color = Color( 0.32549, 0.470588, 0.964706, 1 )
+light_energy = 4.829
+light_indirect_energy = 5.81
+
+[node name="Particles" type="Particles" parent="."]
+transform = Transform( 1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, 0, 0 )
+visible = false
+material_override = SubResource( 16 )
+amount = 4
+process_material = SubResource( 17 )
+draw_pass_1 = SubResource( 18 )
+
+[node name="HealthBar3D" parent="." instance=ExtResource( 6 )]
+transform = Transform( 0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0.7, 0 )
+visible = false
+texture = SubResource( 19 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 20 )
+
+[node name="EffectPlayer" type="AudioStreamPlayer3D" parent="."]
+unit_db = 41.063
+
+[connection signal="body_entered" from="." to="." method="_on_Ball_body_entered"]
+[connection signal="finished" from="EffectPlayer" to="." method="_on_EffectPlayer_finished"]

@@ -1,0 +1,22 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+Android.arm64-v8a="res://libs/aarch64-linux-android/release/libbackend_wrapper.so"
+Android.x86_64="res://libs/x86_64-linux-android/release/libbackend_wrapper.so"
+OSX.64="res://libs/macOs/libbackend_wrapper.dylib"
+Windows.64="res://libs/windows64/backend_wrapper.dll"
+X11.64="res://libbackend_wrapper.so"
+
+[dependencies]
+
+Android.arm64-v8a=[ "res://libs/aarch64-linux-android/release/libbhd.so" ]
+Android.x86_64=[ "res://libs/x86_64-linux-android/release/libbhd.so" ]
+OSX.64=[ "res://libs/macOs/libbhd.dylib" ]
+Windows.64=[ "res://libs/windows64/libbhd.dll" ]
+X11.64=[ "res://libs/linux64/libbhd.so" ]

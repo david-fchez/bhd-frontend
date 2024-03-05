@@ -1,0 +1,33 @@
+[gd_resource type="Environment" load_steps=2 format=2]
+
+[sub_resource type="ProceduralSky" id=1]
+
+[resource]
+background_mode = 2
+background_sky = SubResource( 1 )
+background_energy = 0.4
+ambient_light_energy = 10.96
+ambient_light_sky_contribution = 0.4
+fog_color = Color( 0.168627, 0.513726, 0.854902, 1 )
+fog_sun_color = Color( 0.227451, 0.792157, 0.14902, 1 )
+fog_sun_amount = 0.2
+fog_depth_begin = 939.3
+fog_depth_end = 1150.5
+auto_exposure_scale = 0.61
+auto_exposure_min_luma = 0.17
+auto_exposure_max_luma = 8.25
+ssao_radius = 50.51
+ssao_intensity = 61.56
+ssao_bias = 2.246
+dof_blur_far_distance = 17.34
+dof_blur_far_transition = 1.26
+dof_blur_near_enabled = true
+dof_blur_near_distance = 3.98
+dof_blur_near_transition = 1.32
+glow_intensity = 1.37
+glow_strength = 0.63
+glow_bloom = 0.38
+glow_bicubic_upscale = true
+adjustment_brightness = 0.76
+adjustment_contrast = 0.92
+adjustment_saturation = 1.65

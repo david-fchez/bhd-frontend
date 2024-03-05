@@ -1,0 +1,194 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://scenes/GUISphere.gd" type="Script" id=1]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://theme/blue_button.tres" type="StyleBox" id=3]
+[ext_resource path="res://theme/blue_button_pressed.tres" type="StyleBox" id=4]
+[ext_resource path="res://status_bar/StatusBar.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=6]
+
+[sub_resource type="DynamicFont" id=2]
+size = 48
+font_data = ExtResource( 6 )
+
+[sub_resource type="StreamTexture" id=7]
+flags = 4
+load_path = "res://.import/sphere_slider.png-a998b823dd92e594c62ac1eaab83459e.stex"
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.00392157, 0.282353, 0.780392, 1 )
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color( 0.00392157, 0.282353, 0.780392, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0.576471, 1, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="DynamicFont" id=1]
+size = 48
+font_data = ExtResource( 6 )
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = 128
+script = ExtResource( 1 )
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+
+[node name="Label" type="Label" parent="Control"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -71.0
+margin_right = 71.0
+margin_bottom = 106.0
+align = 1
+
+[node name="StatusBar" parent="Control" instance=ExtResource( 5 )]
+margin_bottom = 100.0
+
+[node name="Stats" type="VBoxContainer" parent="Control"]
+margin_left = 37.0
+margin_top = 189.0
+margin_right = 731.0
+margin_bottom = 796.0
+mouse_filter = 2
+custom_constants/separation = 85
+
+[node name="RewardLabel" type="Label" parent="Control/Stats"]
+margin_right = 694.0
+margin_bottom = 125.0
+rect_min_size = Vector2( 0, 125 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Jackpot: 123"
+
+[node name="Multi" type="VBoxContainer" parent="Control"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -398.0
+margin_top = -540.0
+margin_bottom = 540.0
+mouse_filter = 2
+alignment = 1
+
+[node name="MultiLabel" type="Label" parent="Control/Multi"]
+margin_top = 145.0
+margin_right = 398.0
+margin_bottom = 245.0
+rect_min_size = Vector2( 250, 100 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+text = "X times"
+align = 1
+valign = 2
+
+[node name="MultiValue" type="Label" parent="Control/Multi"]
+margin_top = 249.0
+margin_right = 398.0
+margin_bottom = 342.0
+rect_min_size = Vector2( 250, 40 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+text = "1
+"
+align = 1
+
+[node name="Multiplier" type="VSlider" parent="Control/Multi"]
+margin_top = 346.0
+margin_right = 398.0
+margin_bottom = 746.0
+rect_min_size = Vector2( 398, 400 )
+custom_icons/grabber_highlight = SubResource( 7 )
+custom_icons/grabber = SubResource( 7 )
+custom_styles/slider = SubResource( 6 )
+custom_styles/grabber_area_highlight = SubResource( 3 )
+custom_styles/grabber_area = SubResource( 3 )
+min_value = 1.0
+value = 1.0
+tick_count = 1
+
+[node name="EntryFeeLabel" type="Label" parent="Control/Multi"]
+margin_top = 750.0
+margin_right = 398.0
+margin_bottom = 840.0
+rect_min_size = Vector2( 0, 90 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Entry fee:"
+align = 1
+valign = 1
+
+[node name="EntryFeeValue" type="Label" parent="Control/Multi"]
+margin_top = 844.0
+margin_right = 398.0
+margin_bottom = 934.0
+rect_min_size = Vector2( 0, 90 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "1500"
+align = 1
+valign = 1
+
+[node name="BackButton" type="Button" parent="Control"]
+light_mask = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 25.0
+margin_top = -175.0
+margin_right = 225.0
+margin_bottom = -25.0
+rect_min_size = Vector2( 225, 150 )
+mouse_default_cursor_shape = 2
+size_flags_vertical = 4
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = ExtResource( 3 )
+custom_styles/pressed = ExtResource( 4 )
+custom_styles/normal = ExtResource( 3 )
+text = "Back"
+
+[node name="Hbox" type="HBoxContainer" parent="Control"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -200.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_min_size = Vector2( 400, 200 )
+mouse_filter = 2
+
+[node name="JoinSphere" type="Button" parent="Control/Hbox"]
+light_mask = 2
+margin_left = 772.0
+margin_top = 25.0
+margin_right = 1147.0
+margin_bottom = 175.0
+rect_min_size = Vector2( 375, 150 )
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = ExtResource( 3 )
+custom_styles/pressed = ExtResource( 4 )
+custom_styles/normal = ExtResource( 3 )
+text = "FIRE"
+
+[connection signal="gui_input" from="Control" to="." method="_on_Control_gui_input"]
+[connection signal="value_changed" from="Control/Multi/Multiplier" to="." method="_on_Multiplier_value_changed"]
+[connection signal="pressed" from="Control/BackButton" to="." method="_on_BackButton_pressed"]
+[connection signal="pressed" from="Control/Hbox/JoinSphere" to="." method="_on_JoinSphere_pressed"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://models/ArrowGimbal.gd" type="Script" id=1]
+[ext_resource path="res://scenes/Arrow.tscn" type="PackedScene" id=2]
+
+[node name="CameraGimbal" type="Spatial"]
+script = ExtResource( 1 )
+invert_x = true
+
+[node name="InnerGimbal" type="Spatial" parent="."]
+
+[node name="arrow" parent="InnerGimbal" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.51737 )

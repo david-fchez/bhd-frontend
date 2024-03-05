@@ -1,0 +1,65 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=1]
+[ext_resource path="res://dialogs/DialogBackground.tres" type="Texture" id=2]
+[ext_resource path="res://dialogs/SnackBar.gd" type="Script" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 26
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 22
+font_data = ExtResource( 1 )
+
+[node name="SnackBar" type="CanvasLayer"]
+layer = 100
+visible = false
+script = ExtResource( 3 )
+
+[node name="Control" type="Control" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -525.0
+margin_top = -225.0
+rect_min_size = Vector2( 525, 225 )
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+margin_right = 450.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 475, 175 )
+texture = ExtResource( 2 )
+expand = true
+
+[node name="Vbox" type="VBoxContainer" parent="Control/TextureRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 20
+alignment = 1
+
+[node name="Header" type="Label" parent="Control/TextureRect/Vbox"]
+margin_top = 18.0
+margin_right = 475.0
+margin_bottom = 50.0
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Box game finished"
+align = 1
+
+[node name="Message" type="Label" parent="Control/TextureRect/Vbox"]
+margin_top = 70.0
+margin_right = 475.0
+margin_bottom = 157.0
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "box name
+winner/loser
+15000 sat"
+align = 1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 4.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -1,0 +1,348 @@
+[gd_scene load_steps=31 format=2]
+
+[ext_resource path="res://scenes/explosion/mesh_p_lp_90.mesh" type="ArrayMesh" id=1]
+[ext_resource path="res://scenes/explosion/textures/part_c2.png" type="Texture" id=2]
+[ext_resource path="res://scenes/explosion/textures/part_c.png" type="Texture" id=3]
+[ext_resource path="res://scenes/explosion/Explosion.gd" type="Script" id=4]
+[ext_resource path="res://scenes/explosion/textures/part_c3.png" type="Texture" id=5]
+[ext_resource path="res://scenes/explosion/particle_spark_base.shader" type="Shader" id=6]
+
+[sub_resource type="ShaderMaterial" id=114]
+render_priority = 52
+shader = ExtResource( 6 )
+shader_param/color = Color( 0.988235, 0.505882, 0.152941, 1 )
+shader_param/texture_gr = ExtResource( 5 )
+
+[sub_resource type="Curve" id=115]
+min_value = -5.0
+max_value = 0.0
+_data = [ Vector2( 0, -5 ), 0.0, 0.0, 0, 0, Vector2( 0.0810811, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.155405, 1.53125 ), 0.0, 0.0, 0, 0, Vector2( 0.398649, 0 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=116]
+curve = SubResource( 115 )
+
+[sub_resource type="Curve" id=117]
+min_value = -1.0
+_data = [ Vector2( 0, 0.622768 ), 0.0, 0.0, 0, 0, Vector2( 0.277027, 0.551339 ), 0.0, 0.0, 0, 0, Vector2( 0.702703, 0.283482 ), -0.954365, -0.954365, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=118]
+curve = SubResource( 117 )
+
+[sub_resource type="Gradient" id=119]
+offsets = PoolRealArray( 0, 0.097561, 0.845528, 1 )
+colors = PoolColorArray( 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 )
+
+[sub_resource type="GradientTexture" id=120]
+gradient = SubResource( 119 )
+
+[sub_resource type="Curve" id=121]
+max_value = 2.0
+_data = [ Vector2( 0, 2 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.962054 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=122]
+curve = SubResource( 121 )
+
+[sub_resource type="ParticlesMaterial" id=123]
+flag_rotate_y = true
+direction = Vector3( 1, 1, 1 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 0.5
+initial_velocity_random = 0.1
+angular_velocity_curve = SubResource( 118 )
+angle_curve = SubResource( 116 )
+scale_curve = SubResource( 122 )
+color_ramp = SubResource( 120 )
+
+[sub_resource type="Gradient" id=113]
+offsets = PoolRealArray( 0, 0.101695, 0.202247, 0.331461, 0.519774, 1 )
+colors = PoolColorArray( 0, 0.364706, 0, 1, 0, 0.333333, 0, 1, 0, 0.0705882, 0, 1, 0, 0, 0.662745, 1, 0, 0, 0.25098, 1, 0, 0, 0.168627, 1 )
+
+[sub_resource type="GradientTexture" id=124]
+gradient = SubResource( 113 )
+
+[sub_resource type="Curve" id=125]
+min_value = -1.0
+_data = [ Vector2( 0, 0.0111607 ), 0.0, 0.0, 0, 0, Vector2( 0.336585, -0.203125 ), 0.0, 0.0, 0, 0, Vector2( 0.687805, -0.361607 ), 0.0, 0.0, 0, 0, Vector2( 1, -0.111607 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=126]
+curve = SubResource( 125 )
+
+[sub_resource type="Curve" id=127]
+_data = [ Vector2( 0, 0.600446 ), 0.0, 0.0, 0, 0, Vector2( 0.168919, 0.850446 ), 0.951028, 0.951028, 0, 0, Vector2( 0.27027, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.5, 0.868304 ), -1.52473, -1.52473, 0, 0, Vector2( 0.668919, 0.636161 ), -1.37225, -1.37225, 0, 0, Vector2( 1, 0.0915179 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=128]
+curve = SubResource( 127 )
+
+[sub_resource type="ParticlesMaterial" id=129]
+emission_shape = 2
+emission_box_extents = Vector3( 0.1, 0.001, 0.1 )
+direction = Vector3( 0, 0, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 0.5
+angular_velocity = 399.21
+angular_velocity_random = 0.39
+linear_accel_curve = SubResource( 126 )
+tangential_accel = 0.2
+tangential_accel_random = 0.19
+scale = 0.06
+scale_curve = SubResource( 128 )
+color_ramp = SubResource( 124 )
+
+[sub_resource type="Shader" id=107]
+code = "shader_type spatial;
+render_mode blend_add,depth_draw_alpha_prepass,cull_back,diffuse_burley,specular_schlick_ggx,unshaded;
+
+uniform sampler2D texture_albedo : hint_albedo;
+uniform vec4 color:hint_color;
+
+
+void vertex() {
+	mat4 mat_world = mat4(normalize(CAMERA_MATRIX[0])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[1])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[2])*length(WORLD_MATRIX[2]),WORLD_MATRIX[3]);
+	MODELVIEW_MATRIX = INV_CAMERA_MATRIX * mat_world;
+	
+	VERTEX*=2.;
+    
+}
+
+void fragment() {
+    vec4 albedo_tex = texture(texture_albedo,(UV));
+    ALBEDO = color.rgb/max(1.-albedo_tex.a,0.0001);
+	ALPHA=albedo_tex.a*COLOR.g;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=108]
+render_priority = 50
+shader = SubResource( 107 )
+shader_param/color = Color( 0.0470588, 0.560784, 0.164706, 1 )
+shader_param/texture_albedo = ExtResource( 2 )
+
+[sub_resource type="Shader" id=109]
+code = "shader_type spatial;
+render_mode blend_add,depth_draw_alpha_prepass,cull_back,diffuse_burley,specular_schlick_ggx,unshaded;
+
+uniform sampler2D texture_albedo : hint_albedo;
+uniform vec4 color:hint_color;
+
+
+void vertex() {
+	mat4 mat_world = mat4(normalize(CAMERA_MATRIX[0])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[1])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[2])*length(WORLD_MATRIX[2]),WORLD_MATRIX[3]);
+	MODELVIEW_MATRIX = INV_CAMERA_MATRIX * mat_world;
+	VERTEX*=2.;
+    
+}
+
+void fragment() {
+    vec4 albedo_tex = texture(texture_albedo,(UV));
+    ALBEDO = color.rgb/max(1.-albedo_tex.a,0.0001);
+	ALPHA=albedo_tex.a*COLOR.b;
+}
+"
+
+[sub_resource type="ShaderMaterial" id=110]
+render_priority = 50
+next_pass = SubResource( 108 )
+shader = SubResource( 109 )
+shader_param/color = Color( 0.223529, 0.505882, 0.941176, 1 )
+shader_param/texture_albedo = ExtResource( 3 )
+
+[sub_resource type="Shader" id=111]
+code = "shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_toon,specular_schlick_ggx,shadows_disabled; //ambient_light_disabled
+
+uniform bool use_occ=false;
+uniform bool cell_shading=false;
+uniform bool fix_perspective=false;
+uniform bool use_light_color=true;
+
+uniform vec4 object_color : hint_color = vec4(0.5,0.5,0.5,1.0);
+uniform vec4 base_light_color : hint_color = vec4(1.0,1.0,1.0,1.0);
+uniform vec4 shade_color : hint_color = vec4(0.05,0.05,0.05,1.);
+
+uniform float shade_threshold : hint_range(-1.0, 1.0, 0.001) = 0.1;
+uniform float shade_softness : hint_range(0.0, 1.0, 0.001) = 0.02;
+
+varying vec3 spos;
+varying vec3 roc;
+varying float sp_size;
+
+// fix black color
+// t2=max(t2,0.001)
+
+void vertex() {
+    //MODELVIEW_MATRIX = INV_CAMERA_MATRIX * mat4(CAMERA_MATRIX[0],CAMERA_MATRIX[1],CAMERA_MATRIX[2],WORLD_MATRIX[3]);
+	
+	mat4 mat_world = mat4(normalize(CAMERA_MATRIX[0])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[1])*length(WORLD_MATRIX[0]),normalize(CAMERA_MATRIX[2])*length(WORLD_MATRIX[2]),WORLD_MATRIX[3]);
+	float ts=1.;
+	
+	MODELVIEW_MATRIX = INV_CAMERA_MATRIX * mat_world;
+	spos=mat_world[3].xyz;
+	float ex_scale=max(COLOR.r,0.0001);
+	sp_size=2./max(length(WORLD_MATRIX[0].xyz),0.0001);
+	roc=CAMERA_MATRIX[3].xyz*sp_size;
+	if(fix_perspective)
+		//VERTEX*=clamp(length(spos-CAMERA_MATRIX[3].xyz)/2.,0.,1.); //correct proportion fix on zoom
+		VERTEX*=clamp(length(spos-CAMERA_MATRIX[3].xyz)/(2./sp_size),0.,1.); //not correct proportion fix on zoom
+}
+
+float cell_shade(vec3 nor, vec3 light)
+{
+	float NdotL = dot(nor, light);
+	float is_lit = step(shade_threshold, NdotL);
+	float shade_value = smoothstep(shade_threshold - shade_softness ,shade_threshold + shade_softness, NdotL);
+	//diffuse = mix(shade, base, shade_value);
+	return shade_value;
+}
+
+// The MIT License
+// Copyright © 2014 Inigo Quilez
+// https://iquilezles.org/www/articles/intersectors/intersectors.htm
+float sphIntersect( in vec3 ro, in vec3 rd, in vec4 sph )
+{
+	vec3 oc = ro - sph.xyz;
+	float b = dot( oc, rd );
+	float c = dot( oc, oc ) - sph.w*sph.w;
+	float h = b*b - c;
+	if( h<0.0 ) return -1.0;
+	return -b - sqrt( h );
+}
+
+vec3 sphNormal( in vec3 pos, in vec4 sph )
+{
+    return normalize(pos-sph.xyz);
+}
+
+vec4 sph_img( vec3 rd , vec3 lght, vec3 ro, vec3 sp, float sp_sz,vec3 bcol)
+{
+    vec4 sph = vec4( sp, sp_sz);
+    vec3 lig=lght;
+    vec3 col = vec3(0.0);
+
+    float tmin = 1e10;
+    vec3 nor=vec3(0.);
+    float occ = 1.0;
+	float a=0.;
+
+    float t2 = sphIntersect( ro, rd, sph );
+	t2=max(t2,0.001); //to fix black color
+    if( t2>0.0 && t2<tmin )
+    {
+        tmin = t2;
+        vec3 pos = ro + t2*rd;
+        nor = sphNormal( pos, sph );
+        occ = 0.5 + 0.5*nor.y;
+	}
+
+    if( tmin<1000.0 )
+    {
+        vec3 pos = ro + tmin*rd;
+        
+		col = vec3(1.0);
+		a=1.;
+		float shade_value=0.;
+        if(!cell_shading)
+		shade_value = clamp( dot(nor,lig), 0.0, 1.0 ); //base shadow
+		else
+		shade_value=cell_shade(nor,lig); //cell
+		if(use_occ)shade_value+=0.05*occ;
+		col = mix(shade_color.rgb, bcol, shade_value);
+	    //col *= exp( -0.05*tmin );
+    }
+	//col=clamp(col,0.,1.);
+    col = sqrt(col);
+    return vec4(col, a );
+}
+
+void light(){
+	vec3 rd=normalize(((CAMERA_MATRIX) * vec4(normalize(-VIEW), 0.0)).xyz);
+	//DIFFUSE_LIGHT=vec3(0.);
+	//SPECULAR_LIGHT=vec3(0.);
+	
+	vec3 lgt=normalize(((CAMERA_MATRIX) * vec4(normalize(LIGHT), 0.0)).xyz);
+	//proportion fix on zoom
+	vec4 col=vec4(0.);
+	vec3 lc=base_light_color.rgb;
+	if(use_light_color){
+		lc=LIGHT_COLOR;
+	}
+	if(fix_perspective)
+		//correct
+		//col=sph_img(normalize(rd),normalize( lgt ), roc,spos*sp_size, 1.-0.999*(1.-min(length(spos-CAMERA_MATRIX[3].xyz)/2.,1.)),lc);
+		//not correct
+		col=sph_img(normalize(rd),normalize( lgt ), roc,spos*sp_size, 1.-0.999*(1.-min(length(spos-CAMERA_MATRIX[3].xyz)/(2./sp_size),1.)),lc);
+	else
+		col=sph_img(normalize(rd),normalize( lgt ), roc,spos*sp_size, 1.,lc); //no fix
+	SPECULAR_LIGHT+=col.rgb*ATTENUATION*ALBEDO;
+	DIFFUSE_LIGHT+=col.rgb*ATTENUATION*ALBEDO;
+	//ALPHA=col.w;
+}
+
+void fragment() {
+	ALBEDO=object_color.rgb;
+	METALLIC = 0.;
+	ROUGHNESS = 0.9;
+	SPECULAR = 0.5;
+}"
+
+[sub_resource type="ShaderMaterial" id=112]
+render_priority = 50
+next_pass = SubResource( 110 )
+shader = SubResource( 111 )
+shader_param/use_occ = false
+shader_param/cell_shading = true
+shader_param/fix_perspective = false
+shader_param/use_light_color = false
+shader_param/object_color = Color( 0.298039, 1, 0.917647, 1 )
+shader_param/base_light_color = Color( 0.713726, 0.380392, 0.992157, 1 )
+shader_param/shade_color = Color( 0.00392157, 0.0117647, 0.0156863, 1 )
+shader_param/shade_threshold = 0.1
+shader_param/shade_softness = 0.02
+
+[sub_resource type="ArrayMesh" id=130]
+surfaces/0 = {
+"aabb": AABB( -0.5, -0.5, -4.87479e-08, 1, 1, 1.00487e-05 ),
+"array_data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 190, 20, 251, 190, 197, 197, 199, 189, 31, 177, 0, 179, 0, 0, 126, 0, 0, 127, 0, 127, 112, 54, 235, 32, 0, 0, 0, 191, 45, 189, 187, 178, 47, 189, 187, 178, 0, 0, 126, 0, 0, 126, 0, 127, 0, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 94, 131, 236, 190, 23, 239, 67, 190, 151, 145, 30, 179, 0, 0, 126, 0, 0, 126, 0, 127, 240, 52, 223, 40, 190, 20, 251, 190, 197, 197, 199, 189, 31, 177, 0, 179, 0, 0, 126, 0, 0, 127, 0, 127, 112, 54, 235, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 49, 219, 212, 190, 219, 57, 142, 190, 18, 90, 54, 179, 0, 0, 127, 0, 0, 126, 0, 127, 28, 51, 100, 45, 94, 131, 236, 190, 23, 239, 67, 190, 151, 145, 30, 179, 0, 0, 127, 0, 0, 127, 0, 127, 240, 52, 223, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 242, 4, 181, 190, 244, 4, 181, 190, 148, 32, 71, 179, 0, 0, 126, 0, 0, 127, 0, 127, 175, 48, 175, 48, 49, 219, 212, 190, 219, 57, 142, 190, 18, 90, 54, 179, 0, 0, 126, 0, 0, 126, 0, 127, 28, 51, 100, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 216, 57, 142, 190, 50, 219, 212, 190, 24, 64, 80, 179, 0, 0, 127, 0, 0, 127, 0, 127, 100, 45, 28, 51, 242, 4, 181, 190, 244, 4, 181, 190, 148, 32, 71, 179, 0, 0, 127, 0, 0, 127, 0, 127, 175, 48, 175, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 126, 0, 127, 0, 56, 0, 56, 20, 239, 67, 190, 94, 131, 236, 190, 217, 94, 81, 179, 0, 0, 127, 0, 0, 127, 0, 127, 223, 40, 240, 52, 216, 57, 142, 190, 50, 219, 212, 190, 24, 64, 80, 179, 0, 0, 127, 0, 0, 126, 0, 127, 100, 45, 28, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 126, 0, 127, 0, 56, 0, 56, 193, 197, 199, 189, 190, 20, 251, 190, 213, 113, 74, 179, 0, 0, 127, 0, 0, 127, 0, 127, 235, 32, 112, 54, 20, 239, 67, 190, 94, 131, 236, 190, 217, 94, 81, 179, 0, 0, 127, 0, 0, 127, 0, 127, 223, 40, 240, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 164, 133, 136, 178, 0, 0, 0, 191, 46, 189, 59, 179, 0, 0, 127, 0, 0, 126, 0, 127, 0, 0, 255, 55, 193, 197, 199, 189, 190, 20, 251, 190, 213, 113, 74, 179, 0, 0, 127, 0, 0, 127, 0, 127, 235, 32, 112, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 189, 197, 199, 61, 191, 20, 251, 190, 145, 209, 37, 179, 0, 0, 127, 0, 0, 127, 0, 127, 235, 32, 199, 56, 164, 133, 136, 178, 0, 0, 0, 191, 46, 189, 59, 179, 0, 0, 127, 0, 0, 127, 0, 127, 0, 0, 255, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 17, 239, 67, 62, 95, 131, 236, 190, 163, 134, 9, 179, 0, 0, 127, 0, 0, 127, 0, 127, 223, 40, 135, 57, 189, 197, 199, 61, 191, 20, 251, 190, 145, 209, 37, 179, 0, 0, 127, 0, 0, 126, 0, 127, 235, 32, 199, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 218, 57, 142, 62, 50, 219, 212, 190, 120, 229, 207, 178, 0, 0, 127, 0, 0, 127, 0, 127, 100, 45, 56, 58, 17, 239, 67, 62, 95, 131, 236, 190, 163, 134, 9, 179, 0, 0, 127, 0, 0, 127, 0, 127, 223, 40, 135, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 244, 4, 181, 62, 242, 4, 181, 190, 97, 192, 132, 178, 0, 0, 126, 0, 0, 127, 0, 127, 175, 48, 212, 58, 218, 57, 142, 62, 50, 219, 212, 190, 120, 229, 207, 178, 0, 0, 126, 0, 0, 127, 0, 127, 100, 45, 56, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 50, 219, 212, 62, 216, 57, 142, 190, 48, 5, 210, 177, 0, 0, 127, 0, 0, 127, 0, 127, 28, 51, 83, 59, 244, 4, 181, 62, 242, 4, 181, 190, 97, 192, 132, 178, 0, 0, 127, 0, 0, 127, 0, 127, 175, 48, 212, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 96, 131, 236, 62, 15, 239, 67, 190, 160, 18, 110, 49, 0, 0, 126, 0, 0, 126, 0, 127, 240, 52, 178, 59, 50, 219, 212, 62, 216, 57, 142, 190, 48, 5, 210, 177, 0, 0, 126, 0, 0, 127, 0, 127, 28, 51, 83, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 191, 20, 251, 62, 175, 197, 199, 189, 94, 194, 93, 50, 0, 0, 127, 0, 0, 127, 0, 127, 112, 54, 236, 59, 96, 131, 236, 62, 15, 239, 67, 190, 160, 18, 110, 49, 0, 0, 127, 0, 0, 126, 0, 127, 240, 52, 178, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 0, 0, 0, 63, 242, 102, 70, 52, 55, 189, 187, 50, 0, 0, 126, 0, 0, 126, 0, 127, 0, 56, 0, 60, 191, 20, 251, 62, 175, 197, 199, 189, 94, 194, 93, 50, 0, 0, 126, 0, 0, 127, 0, 127, 112, 54, 236, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 189, 20, 251, 62, 224, 197, 199, 61, 36, 177, 0, 51, 0, 0, 127, 0, 0, 127, 0, 127, 199, 56, 236, 59, 0, 0, 0, 63, 242, 102, 70, 52, 55, 189, 187, 50, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 91, 131, 236, 62, 37, 239, 67, 62, 155, 145, 30, 51, 0, 0, 127, 0, 0, 127, 0, 127, 135, 57, 178, 59, 189, 20, 251, 62, 224, 197, 199, 61, 36, 177, 0, 51, 0, 0, 127, 0, 0, 126, 0, 127, 199, 56, 236, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 44, 219, 212, 62, 227, 57, 142, 62, 22, 90, 54, 51, 0, 0, 127, 0, 0, 127, 0, 127, 56, 58, 83, 59, 91, 131, 236, 62, 37, 239, 67, 62, 155, 145, 30, 51, 0, 0, 127, 0, 0, 127, 0, 127, 135, 57, 178, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 234, 4, 181, 62, 252, 4, 181, 62, 152, 32, 71, 51, 0, 0, 127, 0, 0, 127, 0, 127, 212, 58, 212, 58, 44, 219, 212, 62, 227, 57, 142, 62, 22, 90, 54, 51, 0, 0, 127, 0, 0, 127, 0, 127, 56, 58, 83, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 126, 0, 127, 0, 56, 0, 56, 207, 57, 142, 62, 56, 219, 212, 62, 24, 64, 80, 51, 0, 0, 126, 0, 0, 127, 0, 127, 83, 59, 56, 58, 234, 4, 181, 62, 252, 4, 181, 62, 152, 32, 71, 51, 0, 0, 126, 0, 0, 127, 0, 127, 212, 58, 212, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 251, 238, 67, 62, 100, 131, 236, 62, 217, 94, 81, 51, 0, 0, 126, 0, 0, 126, 0, 127, 178, 59, 135, 57, 207, 57, 142, 62, 56, 219, 212, 62, 24, 64, 80, 51, 0, 0, 126, 0, 0, 127, 0, 127, 83, 59, 56, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 133, 197, 199, 61, 193, 20, 251, 62, 209, 113, 74, 51, 0, 0, 127, 0, 0, 127, 0, 127, 236, 59, 199, 56, 251, 238, 67, 62, 100, 131, 236, 62, 217, 94, 81, 51, 0, 0, 127, 0, 0, 126, 0, 127, 178, 59, 135, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 126, 0, 0, 127, 0, 127, 0, 56, 0, 56, 165, 119, 7, 181, 0, 0, 0, 63, 40, 189, 59, 51, 0, 0, 126, 0, 0, 126, 0, 127, 0, 60, 255, 55, 133, 197, 199, 61, 193, 20, 251, 62, 209, 113, 74, 51, 0, 0, 126, 0, 0, 127, 0, 127, 236, 59, 199, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 10, 198, 199, 189, 187, 20, 251, 62, 135, 209, 37, 51, 0, 0, 127, 0, 0, 126, 0, 127, 236, 59, 112, 54, 165, 119, 7, 181, 0, 0, 0, 63, 40, 189, 59, 51, 0, 0, 127, 0, 0, 127, 0, 127, 0, 60, 255, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 57, 239, 67, 190, 87, 131, 236, 62, 150, 134, 9, 51, 0, 0, 127, 0, 0, 127, 0, 127, 178, 59, 240, 52, 10, 198, 199, 189, 187, 20, 251, 62, 135, 209, 37, 51, 0, 0, 127, 0, 0, 126, 0, 127, 236, 59, 112, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 236, 57, 142, 190, 38, 219, 212, 62, 89, 229, 207, 50, 0, 0, 127, 0, 0, 126, 0, 127, 83, 59, 28, 51, 57, 239, 67, 190, 87, 131, 236, 62, 150, 134, 9, 51, 0, 0, 127, 0, 0, 127, 0, 127, 178, 59, 240, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 3, 5, 181, 190, 227, 4, 181, 62, 64, 192, 132, 50, 0, 0, 127, 0, 0, 127, 0, 127, 212, 58, 175, 48, 236, 57, 142, 190, 38, 219, 212, 62, 89, 229, 207, 50, 0, 0, 127, 0, 0, 127, 0, 127, 83, 59, 28, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 126, 0, 127, 0, 56, 0, 56, 62, 219, 212, 190, 198, 57, 142, 62, 168, 4, 210, 49, 0, 0, 127, 0, 0, 127, 0, 127, 56, 58, 100, 45, 3, 5, 181, 190, 227, 4, 181, 62, 64, 192, 132, 50, 0, 0, 127, 0, 0, 126, 0, 127, 212, 58, 175, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 56, 104, 131, 236, 190, 231, 238, 67, 62, 184, 19, 110, 177, 0, 0, 127, 0, 0, 126, 0, 127, 135, 57, 223, 40, 62, 219, 212, 190, 198, 57, 142, 62, 168, 4, 210, 49, 0, 0, 127, 0, 0, 127, 0, 127, 56, 58, 100, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 126, 0, 127, 0, 56, 0, 56, 195, 20, 251, 190, 91, 197, 199, 61, 162, 194, 93, 178, 0, 0, 127, 0, 0, 127, 0, 127, 199, 56, 235, 32, 104, 131, 236, 190, 231, 238, 67, 62, 184, 19, 110, 177, 0, 0, 127, 0, 0, 126, 0, 127, 135, 57, 223, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 127, 0, 0, 126, 0, 127, 0, 56, 0, 56, 0, 0, 0, 191, 45, 189, 187, 178, 47, 189, 187, 178, 0, 0, 127, 0, 0, 127, 0, 127, 0, 56, 0, 0, 195, 20, 251, 190, 91, 197, 199, 61, 162, 194, 93, 178, 0, 0, 127, 0, 0, 127, 0, 127, 199, 56, 235, 32 ),
+"array_index_data": PoolByteArray(  ),
+"blend_shape_data": [  ],
+"format": 97303,
+"index_count": 0,
+"material": SubResource( 112 ),
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 96
+}
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 4 )
+
+[node name="sparks" type="Particles" parent="."]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+material_override = SubResource( 114 )
+cast_shadow = 0
+emitting = false
+amount = 250
+lifetime = 1.78
+one_shot = true
+speed_scale = 17.45
+explosiveness = 1.0
+randomness = 0.86
+visibility_aabb = AABB( -1.194, -1.245, -1, 2.388, 2.49, 2 )
+process_material = SubResource( 123 )
+draw_pass_1 = ExtResource( 1 )
+
+[node name="balls" type="Particles" parent="."]
+transform = Transform( 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0 )
+cast_shadow = 0
+emitting = false
+amount = 200
+lifetime = 3.94
+one_shot = true
+speed_scale = 14.5
+explosiveness = 0.69
+randomness = 0.35
+visibility_aabb = AABB( -1.10512, -0.738125, -0.791453, 2.21024, 1.60418, 1.58291 )
+local_coords = false
+process_material = SubResource( 129 )
+draw_pass_1 = SubResource( 130 )

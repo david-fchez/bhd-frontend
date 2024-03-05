@@ -1,0 +1,178 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://menu/Background2D/2DBackground.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/GameList.gd" type="Script" id=4]
+[ext_resource path="res://theme/blue_button_pressed.tres" type="StyleBox" id=5]
+[ext_resource path="res://theme/blue_button.tres" type="StyleBox" id=6]
+[ext_resource path="res://status_bar/StatusBar.tscn" type="PackedScene" id=7]
+[ext_resource path="res://theme/CustomTheme.tres" type="Theme" id=8]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+content_margin_left = 10.0
+bg_color = Color( 0, 0.576471, 1, 1 )
+shadow_color = Color( 0, 0.447059, 0.776471, 1 )
+shadow_size = 8
+anti_aliasing_size = 0.1
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 15.0
+bg_color = Color( 0, 0.447059, 0.776471, 1 )
+shadow_color = Color( 0, 0.447059, 0.776471, 1 )
+shadow_size = 8
+
+[sub_resource type="DynamicFont" id=4]
+size = 24
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=2]
+
+[node name="GameList" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 1000, 800 )
+mouse_filter = 2
+theme = ExtResource( 8 )
+script = ExtResource( 4 )
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 3 )]
+
+[node name="Vbox" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 1000, 0 )
+mouse_filter = 2
+custom_constants/separation = 40
+alignment = 1
+
+[node name="EmptyLabel" type="Label" parent="Vbox"]
+visible = false
+margin_left = 95.0
+margin_top = 70.0
+margin_right = 1104.0
+margin_bottom = 570.0
+rect_min_size = Vector2( 0, 500 )
+size_flags_horizontal = 4
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "No games available"
+align = 1
+valign = 1
+
+[node name="SortBtns" type="HBoxContainer" parent="Vbox"]
+visible = false
+margin_left = 170.0
+margin_top = 200.0
+margin_right = 910.0
+margin_bottom = 300.0
+rect_min_size = Vector2( 740, 0 )
+size_flags_horizontal = 4
+custom_constants/separation = 120
+alignment = 1
+
+[node name="PlayerSort" type="Button" parent="Vbox/SortBtns"]
+margin_left = 12.0
+margin_right = 312.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 400, 150 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = SubResource( 5 )
+custom_styles/pressed = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
+text = "Players"
+
+[node name="PlayoutSort" type="Button" parent="Vbox/SortBtns"]
+margin_left = 427.0
+margin_right = 727.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 400, 150 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = SubResource( 5 )
+custom_styles/pressed = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
+text = "Playout"
+
+[node name="CC" type="CenterContainer" parent="Vbox"]
+margin_top = 120.0
+margin_right = 1920.0
+margin_bottom = 770.0
+rect_min_size = Vector2( 1000, 650 )
+mouse_filter = 2
+
+[node name="Tree" type="Tree" parent="Vbox/CC"]
+margin_left = 210.0
+margin_top = 50.0
+margin_right = 1710.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 1500, 550 )
+theme = ExtResource( 8 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_constants/vseparation = 20
+custom_fonts/title_button_font = ExtResource( 2 )
+custom_fonts/font = SubResource( 4 )
+custom_styles/button_pressed = SubResource( 3 )
+custom_styles/bg = SubResource( 2 )
+columns = 7
+column_titles_visible = true
+hide_root = true
+select_mode = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Vbox"]
+visible = false
+margin_left = 140.0
+margin_top = 280.0
+margin_right = 940.0
+margin_bottom = 1480.0
+rect_min_size = Vector2( 800, 1200 )
+size_flags_horizontal = 4
+theme = ExtResource( 8 )
+scroll_horizontal_enabled = false
+
+[node name="Vbox" type="VBoxContainer" parent="Vbox/ScrollContainer"]
+margin_right = 800.0
+margin_bottom = 1200.0
+rect_min_size = Vector2( 800, 1200 )
+size_flags_horizontal = 4
+custom_constants/separation = 50
+
+[node name="Hbox" type="HBoxContainer" parent="Vbox"]
+margin_left = 760.0
+margin_top = 810.0
+margin_right = 1160.0
+margin_bottom = 960.0
+mouse_filter = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="Vbox/Hbox"]
+margin_right = 400.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 400, 150 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = ExtResource( 6 )
+custom_styles/pressed = ExtResource( 5 )
+custom_styles/normal = ExtResource( 6 )
+text = "Back"
+
+[node name="StatusBar" parent="." instance=ExtResource( 7 )]
+
+[connection signal="pressed" from="Vbox/SortBtns/PlayerSort" to="." method="sort_games" binds= [ 2, "PlayerCount" ]]
+[connection signal="pressed" from="Vbox/SortBtns/PlayoutSort" to="." method="sort_games" binds= [ 0, "Status" ]]
+[connection signal="button_pressed" from="Vbox/CC/Tree" to="." method="_on_Tree_button_pressed"]
+[connection signal="column_title_pressed" from="Vbox/CC/Tree" to="." method="_on_Tree_column_title_pressed"]
+[connection signal="item_activated" from="Vbox/CC/Tree" to="." method="try_join_box"]
+[connection signal="item_selected" from="Vbox/CC/Tree" to="." method="try_join_box"]
+[connection signal="pressed" from="Vbox/Hbox/CancelButton" to="." method="_on_CancelButton_pressed"]

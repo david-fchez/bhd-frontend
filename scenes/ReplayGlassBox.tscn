@@ -1,0 +1,144 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://scenes/GUIBox.tscn" type="PackedScene" id=1]
+[ext_resource path="res://models/GlassWall.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/ReplayGlassBox.gd" type="Script" id=3]
+[ext_resource path="res://models/CameraGimbal.tscn" type="PackedScene" id=6]
+[ext_resource path="res://models/NeonTube.tscn" type="PackedScene" id=7]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 4
+load_path = "res://.import/pozadina.hdr-440d1f14664c4e657661e990e19eae87.stex"
+
+[sub_resource type="PanoramaSky" id=2]
+radiance_size = 0
+panorama = SubResource( 1 )
+
+[sub_resource type="Environment" id=3]
+background_mode = 2
+background_sky = SubResource( 2 )
+ambient_light_color = Color( 0.145098, 0.211765, 0.890196, 1 )
+ambient_light_energy = 2.6
+ssao_radius = 25.16
+ssao_intensity = 28.02
+ssao_radius2 = 32.71
+ssao_intensity2 = 35.13
+ssao_bias = 2.499
+ssao_light_affect = 0.3
+ssao_color = Color( 0.254902, 0.47451, 0.933333, 1 )
+glow_enabled = true
+glow_intensity = 2.84
+glow_strength = 0.54
+glow_bloom = 0.48
+glow_blend_mode = 1
+
+[sub_resource type="GIProbeData" id=4]
+bounds = AABB( -5, -5, -5, 10, 10, 10 )
+cell_size = 0.0390625
+to_cell_xform = Transform( 25.6, 0, 0, 0, 25.6, 0, 0, 0, 25.6, 128, 128, 128 )
+dynamic_data = PoolIntArray( 0, 9, 256, 256, 256, 1, 0, 0, 0, 0, 0, 0, 7, 0, 9, 34, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 8355711, 0 )
+dynamic_range = 4
+energy = 1.29
+bias = 0.492
+normal_bias = 0.0
+propagation = 0.47
+
+[sub_resource type="BakedLightmapData" id=5]
+energy = 5.98
+interior = true
+
+[node name="GlassBox" type="Spatial"]
+script = ExtResource( 3 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 3 )
+
+[node name="Glass" type="Node" parent="."]
+
+[node name="Wall" parent="Glass" instance=ExtResource( 2 )]
+
+[node name="Wall4" parent="Glass" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+
+[node name="Wall2" parent="Glass" instance=ExtResource( 2 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10, 0, 0 )
+
+[node name="Wall3" parent="Glass" instance=ExtResource( 2 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
+
+[node name="Wall5" parent="Glass" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+
+[node name="Wall6" parent="Glass" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 10, 0 )
+
+[node name="GIProbe" type="GIProbe" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+visible = false
+subdiv = 2
+extents = Vector3( 5, 5, 5 )
+energy = 1.29
+propagation = 0.47
+bias = 0.492
+data = SubResource( 4 )
+
+[node name="CameraTarget" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+
+[node name="CameraGimbal" parent="." instance=ExtResource( 6 )]
+target = NodePath("../CameraTarget")
+mouse_control = true
+max_zoom = 1.916
+min_zoom = 0.871
+
+[node name="BakedLightmap" type="BakedLightmap" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+extents = Vector3( 5, 5, 5 )
+quality = 2
+bounces = 4
+bias = 0.01106
+environment_mode = 1
+environment_min_light = Color( 0, 0, 0.12549, 1 )
+light_data = SubResource( 5 )
+
+[node name="GuiOverlay" parent="." instance=ExtResource( 1 )]
+
+[node name="NeonTubes" type="Node" parent="."]
+
+[node name="NeonTube" parent="NeonTubes" instance=ExtResource( 7 )]
+
+[node name="NeonTube10" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+
+[node name="NeonTube11" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 10, 0, 0 )
+
+[node name="NeonTube12" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 10, 0, 10 )
+
+[node name="NeonTube14" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 10 )
+
+[node name="NeonTube2" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+
+[node name="NeonTube3" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 10 )
+
+[node name="NeonTube4" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0 )
+
+[node name="NeonTube5" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10, 10, 0 )
+
+[node name="NeonTube6" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 10, 0 )
+
+[node name="NeonTube9" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 10, 0, 0 )
+
+[node name="NeonTube13" parent="NeonTubes" instance=ExtResource( 7 )]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
+
+[node name="BackgroundAudioPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = -10.0

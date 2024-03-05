@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://menu/menu.gd" type="Script" id=3]
+[ext_resource path="res://menu/Background2D/2DBackground.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=7]
+[ext_resource path="res://status_bar/StatusBar.tscn" type="PackedScene" id=8]
+[ext_resource path="res://menu/MainMenu.tscn" type="PackedScene" id=9]
+
+[node name="Menu" type="Node"]
+script = ExtResource( 3 )
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 4 )]
+
+[node name="StatusBar" parent="." instance=ExtResource( 8 )]
+
+[node name="Label" type="Label" parent="."]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -52.5
+margin_right = 52.5
+margin_bottom = 75.0
+rect_min_size = Vector2( 100, 75 )
+custom_fonts/font = ExtResource( 7 )
+text = "TEST"
+
+[node name="MainMenu" parent="." instance=ExtResource( 9 )]
+
+[node name="CzfLink" type="RichTextLabel" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -375.0
+margin_top = -50.0
+rect_min_size = Vector2( 375, 50 )
+custom_fonts/normal_font = ExtResource( 7 )
+bbcode_enabled = true
+bbcode_text = "[url=playczf.com]playCZF.com[/url]"
+text = "playCZF.com"
+
+[connection signal="meta_clicked" from="CzfLink" to="." method="_on_CzfLink_meta_clicked"]

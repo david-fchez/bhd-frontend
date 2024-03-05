@@ -1,0 +1,105 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://assets/images/logo_and_name.png" type="Texture" id=1]
+[ext_resource path="res://splashscreen/splashscreen.gd" type="Script" id=2]
+[ext_resource path="res://menu/Background2D/2DBackground.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "DoSplashAnimation"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("bhd_logo:rect_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.33, 1.33 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("bhd_logo:rect_min_size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 648, 480 ), Vector2( 1080, 800 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("bhd_logo:rect_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("bhd_logo:rect_min_size")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 800, 600 ) ]
+}
+
+[node name="SplashScreen" type="CenterContainer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -540.0
+margin_top = -960.0
+margin_right = 540.0
+margin_bottom = 960.0
+mouse_filter = 2
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 4 )]
+
+[node name="SplashAnimation" type="AnimationPlayer" parent="."]
+autoplay = "DoSplashAnimation"
+anims/DoSplashAnimation = SubResource( 1 )
+anims/RESET = SubResource( 2 )
+
+[node name="LoadingLabel" type="Label" parent="."]
+visible = false
+margin_left = 436.0
+margin_top = 942.0
+margin_right = 643.0
+margin_bottom = 978.0
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 5 )
+text = "Loading..."
+
+[node name="bhd_logo" type="TextureRect" parent="."]
+margin_left = 140.0
+margin_top = 660.0
+margin_right = 940.0
+margin_bottom = 1260.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 800, 600 )
+mouse_filter = 2
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+script = ExtResource( 2 )
+
+[connection signal="animation_finished" from="SplashAnimation" to="bhd_logo" method="_on_SplashAnimation_animation_finished"]

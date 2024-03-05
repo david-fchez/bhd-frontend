@@ -1,0 +1,373 @@
+[gd_scene load_steps=21 format=2]
+
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=1]
+[ext_resource path="res://dialogs/DialogBackdrop.tscn" type="PackedScene" id=2]
+[ext_resource path="res://dialogs/DialogBackground.tres" type="Texture" id=3]
+[ext_resource path="res://assets/images/sound-on.png" type="Texture" id=4]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=5]
+[ext_resource path="res://assets/images/volume.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/info.png" type="Texture" id=7]
+[ext_resource path="res://assets/images/wallet.png" type="Texture" id=8]
+[ext_resource path="res://scenes/Settings.gd" type="Script" id=9]
+[ext_resource path="res://theme/blue_button.tres" type="StyleBox" id=10]
+[ext_resource path="res://theme/blue_button_pressed.tres" type="StyleBox" id=11]
+[ext_resource path="res://assets/images/info-hover.png" type="Texture" id=12]
+[ext_resource path="res://assets/images/wallet-hover.png" type="Texture" id=13]
+[ext_resource path="res://assets/images/volume-hover.png" type="Texture" id=14]
+[ext_resource path="res://assets/font/ethno_label_font.tres" type="DynamicFont" id=15]
+[ext_resource path="res://theme/CustomTheme.tres" type="Theme" id=16]
+
+[sub_resource type="DynamicFont" id=1]
+size = 36
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.00392157, 0.282353, 0.780392, 1 )
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color( 0.00392157, 0.282353, 0.780392, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0.576471, 1, 1 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id=7]
+
+[node name="Settings" type="Popup"]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -500.0
+margin_top = -500.0
+margin_right = 500.0
+margin_bottom = 500.0
+rect_min_size = Vector2( 1000, 1000 )
+input_pass_on_modal_close_click = false
+theme = ExtResource( 16 )
+script = ExtResource( 9 )
+
+[node name="DialogBackdrop" parent="." instance=ExtResource( 2 )]
+
+[node name="Bg" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 900, 950 )
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 1
+
+[node name="Version" type="Label" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -100.0
+margin_top = -45.0
+rect_min_size = Vector2( 100, 45 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "1.0.0"
+
+[node name="Vbox" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -500.0
+margin_top = -500.0
+margin_right = 500.0
+margin_bottom = 500.0
+rect_min_size = Vector2( 900, 700 )
+custom_constants/separation = 18
+alignment = 1
+
+[node name="Title" type="Label" parent="Vbox"]
+margin_left = 377.0
+margin_top = 31.0
+margin_right = 622.0
+margin_bottom = 81.0
+rect_min_size = Vector2( 0, 50 )
+size_flags_horizontal = 4
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Settings"
+align = 1
+
+[node name="Hbox" type="HBoxContainer" parent="Vbox"]
+margin_top = 99.0
+margin_right = 1000.0
+margin_bottom = 174.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 50
+
+[node name="Label" type="Label" parent="Vbox/Hbox"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Username"
+align = 2
+valign = 1
+
+[node name="Username" type="Label" parent="Vbox/Hbox"]
+margin_left = 550.0
+margin_right = 759.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 0, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Username"
+align = 2
+valign = 1
+
+[node name="Hbox2" type="HBoxContainer" parent="Vbox"]
+margin_top = 192.0
+margin_right = 1000.0
+margin_bottom = 267.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox2"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Audio"
+align = 2
+valign = 1
+
+[node name="AudioTexture" type="TextureButton" parent="Vbox/Hbox2"]
+margin_left = 525.0
+margin_right = 625.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 100, 75 )
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource( 4 )
+expand = true
+stretch_mode = 5
+
+[node name="Hbox3" type="HBoxContainer" parent="Vbox"]
+margin_top = 285.0
+margin_right = 1000.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 45
+
+[node name="Label" type="Label" parent="Vbox/Hbox3"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Volume"
+align = 2
+valign = 1
+
+[node name="Audio" type="HSlider" parent="Vbox/Hbox3"]
+margin_left = 545.0
+margin_right = 820.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 275, 75 )
+mouse_default_cursor_shape = 2
+custom_icons/grabber_highlight = ExtResource( 14 )
+custom_icons/grabber = ExtResource( 6 )
+custom_styles/slider = SubResource( 6 )
+custom_styles/grabber_area_highlight = SubResource( 3 )
+custom_styles/grabber_area = SubResource( 3 )
+value = 50.0
+
+[node name="CounterValue" type="Label" parent="Vbox/Hbox3"]
+margin_left = 865.0
+margin_right = 940.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 75, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+align = 1
+valign = 1
+
+[node name="Hbox4" type="HBoxContainer" parent="Vbox"]
+margin_top = 378.0
+margin_right = 1000.0
+margin_bottom = 453.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox4"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "About"
+align = 2
+valign = 1
+
+[node name="About" type="TextureButton" parent="Vbox/Hbox4"]
+margin_left = 525.0
+margin_right = 625.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 100, 75 )
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource( 7 )
+texture_pressed = ExtResource( 7 )
+texture_hover = ExtResource( 12 )
+expand = true
+stretch_mode = 5
+
+[node name="Hbox5" type="HBoxContainer" parent="Vbox"]
+margin_top = 471.0
+margin_right = 1000.0
+margin_bottom = 546.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox5"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Transaction list"
+align = 2
+valign = 1
+
+[node name="TransactionList" type="TextureButton" parent="Vbox/Hbox5"]
+margin_left = 525.0
+margin_right = 625.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 100, 75 )
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 8 )
+texture_hover = ExtResource( 13 )
+expand = true
+stretch_mode = 5
+
+[node name="Hbox7" type="HBoxContainer" parent="Vbox"]
+margin_top = 564.0
+margin_right = 1000.0
+margin_bottom = 639.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox7"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Wallet information"
+align = 2
+valign = 1
+
+[node name="WalletInfo" type="TextureButton" parent="Vbox/Hbox7"]
+margin_left = 525.0
+margin_right = 625.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 100, 75 )
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 8 )
+texture_hover = ExtResource( 13 )
+expand = true
+stretch_mode = 5
+
+[node name="Hbox8" type="HBoxContainer" parent="Vbox"]
+margin_top = 657.0
+margin_right = 1000.0
+margin_bottom = 732.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox8"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Auto-enter box"
+align = 2
+valign = 1
+
+[node name="CheckBtn" type="CheckButton" parent="Vbox/Hbox8"]
+margin_left = 525.0
+margin_right = 613.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 88, 75 )
+hint_tooltip = "If enabled, the game won't ask for confirmation when joining a Box Game via a checkbox icon."
+mouse_default_cursor_shape = 2
+theme = ExtResource( 16 )
+custom_styles/focus = SubResource( 7 )
+align = 2
+
+[node name="Hbox9" type="HBoxContainer" parent="Vbox"]
+margin_top = 750.0
+margin_right = 1000.0
+margin_bottom = 825.0
+rect_min_size = Vector2( 0, 75 )
+custom_constants/separation = 25
+
+[node name="Label" type="Label" parent="Vbox/Hbox9"]
+margin_right = 500.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 500, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = ExtResource( 15 )
+text = "Double-click minimize"
+align = 2
+valign = 1
+
+[node name="DblClickBtn" type="CheckButton" parent="Vbox/Hbox9"]
+margin_left = 525.0
+margin_right = 613.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 88, 75 )
+hint_tooltip = "If enabled, minimizes the game when you double-click on the games background area."
+mouse_default_cursor_shape = 2
+theme = ExtResource( 16 )
+custom_styles/focus = SubResource( 7 )
+align = 2
+
+[node name="Hbox6" type="HBoxContainer" parent="Vbox"]
+margin_top = 843.0
+margin_right = 1000.0
+margin_bottom = 968.0
+custom_constants/separation = 50
+alignment = 1
+
+[node name="BackButton" type="Button" parent="Vbox/Hbox6"]
+margin_left = 300.0
+margin_right = 700.0
+margin_bottom = 125.0
+rect_min_size = Vector2( 400, 125 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 5 )
+custom_styles/hover = ExtResource( 10 )
+custom_styles/pressed = ExtResource( 11 )
+custom_styles/normal = ExtResource( 10 )
+text = "Close"
+
+[connection signal="about_to_show" from="." to="." method="_on_Settings_about_to_show"]
+[connection signal="popup_hide" from="." to="." method="_on_BackButton_pressed"]
+[connection signal="pressed" from="Vbox/Hbox2/AudioTexture" to="." method="_on_AudioTexture_pressed"]
+[connection signal="value_changed" from="Vbox/Hbox3/Audio" to="." method="_on_Audio_value_changed"]
+[connection signal="pressed" from="Vbox/Hbox5/TransactionList" to="." method="_on_TransactionList_pressed"]
+[connection signal="pressed" from="Vbox/Hbox7/WalletInfo" to="." method="_on_WalletInfo_pressed"]
+[connection signal="toggled" from="Vbox/Hbox8/CheckBtn" to="." method="_on_CheckBtn_toggled"]
+[connection signal="toggled" from="Vbox/Hbox9/DblClickBtn" to="." method="_on_DblClickBtn_toggled"]
+[connection signal="pressed" from="Vbox/Hbox6/BackButton" to="." method="_on_BackButton_pressed"]

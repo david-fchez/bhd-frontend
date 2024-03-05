@@ -1,0 +1,216 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=1]
+[ext_resource path="res://theme/blue_button_pressed.tres" type="StyleBox" id=2]
+[ext_resource path="res://assets/font/font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://theme/blue_button.tres" type="StyleBox" id=4]
+[ext_resource path="res://status_bar/StatusBar.tscn" type="PackedScene" id=5]
+[ext_resource path="res://menu/Background2D/2DBackground.tscn" type="PackedScene" id=6]
+[ext_resource path="res://scenes/PreGame.gd" type="Script" id=7]
+[ext_resource path="res://scenes/GlassBoxPreview.tscn" type="PackedScene" id=8]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 48
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 48
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 48
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 48
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.223529, 0.709804, 0.290196, 1 )
+
+[node name="PreGame" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 7 )
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 6 )]
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -960.0
+margin_top = 50.0
+margin_right = 960.0
+margin_bottom = 225.0
+rect_min_size = Vector2( 0, 150 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Pre-game"
+align = 1
+valign = 2
+
+[node name="Vbox" type="VBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -875.0
+margin_top = -450.0
+margin_right = 875.0
+margin_bottom = 500.0
+mouse_filter = 2
+alignment = 2
+
+[node name="Grid" type="GridContainer" parent="Vbox"]
+margin_top = 175.0
+margin_right = 1750.0
+margin_bottom = 950.0
+rect_min_size = Vector2( 0, 700 )
+mouse_filter = 2
+custom_constants/hseparation = 100
+columns = 2
+
+[node name="Vbox" type="VBoxContainer" parent="Vbox/Grid"]
+margin_right = 800.0
+margin_bottom = 775.0
+rect_min_size = Vector2( 800, 775 )
+mouse_filter = 2
+custom_constants/separation = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Vbox/Grid/Vbox"]
+margin_right = 800.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 0, 400 )
+mouse_default_cursor_shape = 2
+
+[node name="Sprite" type="Sprite" parent="Vbox/Grid/Vbox/VBoxContainer"]
+position = Vector2( 400, 225 )
+
+[node name="ViewportContainer" type="Viewport" parent="Vbox/Grid/Vbox/VBoxContainer"]
+size = Vector2( 1000, 400 )
+transparent_bg = true
+physics_object_picking = true
+
+[node name="GlassBoxPreview" parent="Vbox/Grid/Vbox/VBoxContainer/ViewportContainer" instance=ExtResource( 8 )]
+
+[node name="CountdownLabel" type="Label" parent="Vbox/Grid/Vbox"]
+margin_top = 410.0
+margin_right = 800.0
+margin_bottom = 610.0
+rect_min_size = Vector2( 0, 200 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Waiting for players..."
+align = 1
+valign = 2
+autowrap = true
+
+[node name="Spacer" type="VBoxContainer" parent="Vbox/Grid"]
+visible = false
+margin_left = 904.0
+margin_right = 1004.0
+margin_bottom = 775.0
+rect_min_size = Vector2( 100, 700 )
+custom_constants/separation = 70
+alignment = 1
+
+[node name="Hbox3" type="VBoxContainer" parent="Vbox/Grid"]
+margin_left = 900.0
+margin_right = 1700.0
+margin_bottom = 775.0
+rect_min_size = Vector2( 800, 750 )
+mouse_filter = 2
+custom_constants/separation = 30
+alignment = 1
+
+[node name="PlayerLabel" type="Label" parent="Vbox/Grid/Hbox3"]
+margin_top = 80.0
+margin_right = 800.0
+margin_bottom = 205.0
+rect_min_size = Vector2( 0, 125 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 7 )
+text = "Players: x/y"
+align = 1
+
+[node name="RewardLabel" type="Label" parent="Vbox/Grid/Hbox3"]
+margin_top = 235.0
+margin_right = 800.0
+margin_bottom = 360.0
+rect_min_size = Vector2( 0, 125 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 4 )
+text = "Reward: 123"
+align = 1
+
+[node name="StatusLabel" type="Label" parent="Vbox/Grid/Hbox3"]
+margin_top = 390.0
+margin_right = 800.0
+margin_bottom = 515.0
+rect_min_size = Vector2( 0, 125 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "status: open"
+align = 1
+autowrap = true
+
+[node name="VoteCountLabel" type="Label" parent="Vbox/Grid/Hbox3"]
+visible = false
+margin_top = 467.0
+margin_right = 800.0
+margin_bottom = 592.0
+rect_min_size = Vector2( 0, 125 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 5 )
+text = "Speed-up votes: "
+align = 1
+autowrap = true
+
+[node name="Hbox2" type="HBoxContainer" parent="Vbox/Grid/Hbox3"]
+margin_top = 545.0
+margin_right = 800.0
+margin_bottom = 695.0
+custom_constants/separation = 50
+alignment = 1
+
+[node name="VoteButton" type="Button" parent="Vbox/Grid/Hbox3/Hbox2"]
+visible = false
+margin_right = 400.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 400, 100 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color_disabled = Color( 0.853027, 0.853027, 0.853027, 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 3 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 2 )
+custom_styles/disabled = SubResource( 8 )
+custom_styles/normal = ExtResource( 4 )
+text = "Speed-up"
+
+[node name="CancelButton" type="Button" parent="Vbox/Grid/Hbox3/Hbox2"]
+margin_left = 200.0
+margin_right = 600.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 400, 150 )
+mouse_default_cursor_shape = 2
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 3 )
+custom_styles/hover = ExtResource( 4 )
+custom_styles/pressed = ExtResource( 2 )
+custom_styles/normal = ExtResource( 4 )
+text = "Back"
+
+[node name="StatusBar" parent="." instance=ExtResource( 5 )]
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="gui_input" from="Vbox/Grid/Vbox/VBoxContainer" to="." method="_on_VBoxContainer_gui_input"]
+[connection signal="pressed" from="Vbox/Grid/Hbox3/Hbox2/VoteButton" to="." method="_on_VoteButton_pressed"]
+[connection signal="pressed" from="Vbox/Grid/Hbox3/Hbox2/CancelButton" to="." method="_on_CancelButton_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

@@ -1,0 +1,205 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://assets/font/ethno_label_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/font/ethnocentric rg.tres" type="DynamicFontData" id=2]
+[ext_resource path="res://assets/images/new.png" type="Texture" id=3]
+[ext_resource path="res://scenes/BoxGameItem.gd" type="Script" id=4]
+[ext_resource path="res://assets/images/checkbox.png" type="Texture" id=5]
+[ext_resource path="res://assets/images/checkbox_green.png" type="Texture" id=6]
+[ext_resource path="res://assets/images/join-checkbox.png" type="Texture" id=7]
+
+[sub_resource type="DynamicFont" id=2]
+size = 40
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=3]
+size = 36
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="BoxGameItem" type="Control"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -480.0
+margin_right = 480.0
+margin_bottom = 860.0
+rect_min_size = Vector2( 960, 860 )
+mouse_default_cursor_shape = 2
+script = ExtResource( 4 )
+
+[node name="Borders" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -450.0
+margin_top = 1.0
+margin_right = 450.0
+margin_bottom = 790.0
+rect_min_size = Vector2( 900, 800 )
+color = Color( 0, 0.576471, 1, 1 )
+
+[node name="Bg" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -440.0
+margin_top = 10.0
+margin_right = 440.0
+margin_bottom = 780.0
+rect_min_size = Vector2( 880, 780 )
+color = Color( 0, 0.0104065, 0.121094, 1 )
+
+[node name="NewIcon" type="TextureRect" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -205.0
+margin_top = 10.0
+margin_right = -50.0
+margin_bottom = 590.0
+rect_min_size = Vector2( 125, 580 )
+texture = ExtResource( 3 )
+stretch_mode = 5
+
+[node name="Hbox" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -400.0
+margin_top = 50.0
+margin_right = 400.0
+margin_bottom = 700.0
+rect_min_size = Vector2( 800, 700 )
+custom_constants/separation = 60
+alignment = 1
+
+[node name="Vbox" type="VBoxContainer" parent="Hbox"]
+margin_left = 44.0
+margin_right = 370.0
+margin_bottom = 700.0
+rect_min_size = Vector2( 300, 700 )
+custom_constants/separation = 60
+alignment = 1
+
+[node name="Label" type="Label" parent="Hbox/Vbox"]
+margin_top = 39.0
+margin_right = 326.0
+margin_bottom = 71.0
+custom_fonts/font = ExtResource( 1 )
+text = "Name"
+
+[node name="Name" type="Label" parent="Hbox/Vbox"]
+margin_top = 131.0
+margin_right = 326.0
+margin_bottom = 206.0
+rect_min_size = Vector2( 0, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Test name"
+
+[node name="Label2" type="Label" parent="Hbox/Vbox"]
+margin_top = 266.0
+margin_right = 326.0
+margin_bottom = 298.0
+custom_fonts/font = ExtResource( 1 )
+text = "Stake"
+
+[node name="Fee" type="Label" parent="Hbox/Vbox"]
+margin_top = 358.0
+margin_right = 326.0
+margin_bottom = 433.0
+rect_min_size = Vector2( 0, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Test name"
+
+[node name="Label3" type="Label" parent="Hbox/Vbox"]
+margin_top = 493.0
+margin_right = 326.0
+margin_bottom = 525.0
+custom_fonts/font = ExtResource( 1 )
+text = "Status"
+
+[node name="Status" type="RichTextLabel" parent="Hbox/Vbox"]
+margin_top = 585.0
+margin_right = 326.0
+margin_bottom = 660.0
+rect_min_size = Vector2( 0, 75 )
+custom_colors/default_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/normal_font = SubResource( 3 )
+bbcode_enabled = true
+
+[node name="Vbox2" type="VBoxContainer" parent="Hbox"]
+margin_left = 430.0
+margin_right = 756.0
+margin_bottom = 700.0
+rect_min_size = Vector2( 300, 700 )
+custom_constants/separation = 60
+alignment = 1
+
+[node name="Label" type="Label" parent="Hbox/Vbox2"]
+margin_top = 41.0
+margin_right = 326.0
+margin_bottom = 73.0
+custom_fonts/font = ExtResource( 1 )
+text = "Players"
+
+[node name="Players" type="Label" parent="Hbox/Vbox2"]
+margin_top = 133.0
+margin_right = 326.0
+margin_bottom = 208.0
+rect_min_size = Vector2( 0, 75 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Test name"
+
+[node name="Label2" type="Label" parent="Hbox/Vbox2"]
+margin_top = 268.0
+margin_right = 326.0
+margin_bottom = 300.0
+custom_fonts/font = ExtResource( 1 )
+text = "Reward"
+
+[node name="Reward" type="Label" parent="Hbox/Vbox2"]
+margin_top = 360.0
+margin_right = 326.0
+margin_bottom = 440.0
+rect_min_size = Vector2( 0, 80 )
+custom_colors/font_color = Color( 0, 0.576471, 1, 1 )
+custom_fonts/font = SubResource( 2 )
+text = "Test name"
+
+[node name="Label3" type="Label" parent="Hbox/Vbox2"]
+visible = false
+margin_top = 460.0
+margin_right = 326.0
+margin_bottom = 475.0
+rect_min_size = Vector2( 0, 15 )
+
+[node name="VB" type="VBoxContainer" parent="Hbox/Vbox2"]
+margin_top = 500.0
+margin_right = 326.0
+margin_bottom = 658.0
+size_flags_horizontal = 8
+alignment = 2
+
+[node name="CheckBtn" type="CheckButton" parent="Hbox/Vbox2/VB"]
+margin_right = 326.0
+margin_bottom = 158.0
+rect_min_size = Vector2( 326, 75 )
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 8
+custom_icons/off = ExtResource( 7 )
+custom_icons/on_disabled = ExtResource( 6 )
+custom_icons/on = ExtResource( 5 )
+custom_styles/focus = SubResource( 1 )
+align = 2
+icon_align = 2
+
+[node name="Spacer" type="Label" parent="Hbox/Vbox2/VB"]
+visible = false
+margin_top = 162.0
+margin_right = 326.0
+margin_bottom = 320.0
+rect_min_size = Vector2( 93, 158 )
+size_flags_vertical = 1
+
+[connection signal="gui_input" from="Hbox" to="." method="_on_Hbox_gui_input"]
+[connection signal="toggled" from="Hbox/Vbox2/VB/CheckBtn" to="." method="check_box"]

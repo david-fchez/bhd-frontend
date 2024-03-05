@@ -1,0 +1,848 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://scenes/GUISphere.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/SphereGame.gd" type="Script" id=2]
+[ext_resource path="res://models/CameraGimbal.tscn" type="PackedScene" id=6]
+
+[sub_resource type="StreamTexture" id=1]
+flags = 4
+load_path = "res://.import/pozadina.hdr-440d1f14664c4e657661e990e19eae87.stex"
+
+[sub_resource type="PanoramaSky" id=2]
+radiance_size = 0
+panorama = SubResource( 1 )
+
+[sub_resource type="Environment" id=3]
+background_mode = 2
+background_sky = SubResource( 2 )
+ambient_light_color = Color( 0.145098, 0.211765, 0.890196, 1 )
+ambient_light_energy = 2.6
+ssao_radius = 25.16
+ssao_intensity = 28.02
+ssao_radius2 = 32.71
+ssao_intensity2 = 35.13
+ssao_bias = 2.499
+ssao_light_affect = 0.3
+ssao_color = Color( 0.254902, 0.47451, 0.933333, 1 )
+glow_enabled = true
+glow_intensity = 2.84
+glow_strength = 0.54
+glow_bloom = 0.48
+glow_blend_mode = 1
+
+[sub_resource type="GIProbeData" id=4]
+bounds = AABB( -5, -5, -5, 10, 10, 10 )
+cell_size = 0.0390625
+to_cell_xform = Transform( 25.6, 0, 0, 0, 25.6, 0, 0, 0, 25.6, 128, 128, 128 )
+dynamic_data = PoolIntArray( 0, 9, 256, 256, 256, 1, 0, 0, 0, 0, 0, 0, 7, 0, 9, 34, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 8355711, 0 )
+dynamic_range = 4
+energy = 1.29
+bias = 0.492
+normal_bias = 0.0
+propagation = 0.47
+
+[sub_resource type="BakedLightmapData" id=5]
+energy = 5.98
+interior = true
+
+[sub_resource type="SphereShape" id=9]
+
+[sub_resource type="SphereMesh" id=6]
+radius = 4.0
+height = 8.0
+rings = 256
+
+[sub_resource type="Shader" id=7]
+code = "shader_type spatial;
+render_mode blend_mix,depth_draw_always,cull_back,diffuse_burley,specular_schlick_ggx;//depth_test_disable;
+
+uniform vec2 MODEL_ROTATION  = vec2(.3, .25);
+uniform vec2 CAMERA_ROTATION = vec2(.5, .5);
+uniform float emission_intensity : hint_range(0.0, 15.0, 0.1) = 2.0;
+
+// 0: Defaults
+// 1: Model
+// 2: Camera
+uniform int MOUSE_CONTROL = 0;
+
+//#define DEBUG
+
+// 1, 2, or 3
+//#define LOOP 1
+
+
+// --------------------------------------------------------
+// HG_SDF
+// https://www.shadertoy.com/view/Xs3GRB
+// --------------------------------------------------------
+
+void pR(inout vec2 p, float a) {
+    p = cos(a)*p + sin(a)*vec2(p.y, -p.x);
+}
+
+float pReflect(inout vec3 p, vec3 planeNormal, float offset) {
+    float t = dot(p, planeNormal)+offset;
+    if (t < 0.) {
+        p = p - (2.*t)*planeNormal;
+    }
+    return sign(t);
+}
+
+float smax(float a, float b, float r) {
+    float m = max(a, b);
+    if ((-a < r) && (-b < r)) {
+        return max(m, -(r - sqrt((r+a)*(r+a) + (r+b)*(r+b))));
+    } else {
+        return m;
+    }
+}
+
+
+// --------------------------------------------------------
+// Icosahedron domain mirroring
+// Adapted from knighty https://www.shadertoy.com/view/MsKGzw
+// --------------------------------------------------------
+
+const float PI = 3.14159265359;
+
+varying vec3 facePlane;
+varying vec3 uPlane;
+varying vec3 vPlane;
+
+const int Type=5;
+varying vec3 nc;
+varying vec3 pab;
+varying vec3 pbc;
+varying vec3 pca;
+
+void vertex() {//setup folding planes and vertex
+    float cospin=cos(PI/float(Type)), scospin=sqrt(0.75-cospin*cospin);
+    nc=vec3(-0.5,-cospin,scospin);//3rd folding plane. The two others are xz and yz planes
+    pbc=vec3(scospin,0.,0.5);//No normalization in order to have 'barycentric' coordinates work evenly
+    pca=vec3(0.,scospin,cospin);
+    pbc=normalize(pbc); pca=normalize(pca);//for slightly better DE. In reality it's not necesary to apply normalization :)
+	pab=vec3(0,0,1);
+    
+    facePlane = pca;
+    uPlane = cross(vec3(1,0,0), facePlane);
+    vPlane = vec3(1,0,0);
+}
+
+void pModIcosahedron(inout vec3 p) {
+    p = abs(p);
+    pReflect(p, nc, 0.);
+    p.xy = abs(p.xy);
+    pReflect(p, nc, 0.);
+    p.xy = abs(p.xy);
+    pReflect(p, nc, 0.);
+}
+
+
+// --------------------------------------------------------
+// Triangle tiling
+// Adapted from mattz https://www.shadertoy.com/view/4d2GzV
+// --------------------------------------------------------
+
+const float sqrt3 = 1.7320508075688772;
+const float i3 = 0.5773502691896258;
+
+const mat2 cart2hex = mat2(vec2(1.0, 0.0), vec2(i3, 2. * i3));
+const mat2 hex2cart = mat2(vec2(1.0, 0.0), vec2(-.5, .5 * sqrt3));
+
+const float PHI = (1.618033988749895);
+const float TAU = 6.283185307179586;
+
+struct TriPoints {
+	vec2 a;
+    vec2 b;
+    vec2 c;
+    vec2 center;
+    vec2 ab;
+    vec2 bc;
+    vec2 ca;
+};
+
+TriPoints closestTriPoints(vec2 p) {    
+    vec2 pTri = cart2hex * p;
+    vec2 pi = floor(pTri);
+    vec2 pf = fract(pTri);
+    
+    float split1 = step(pf.y, pf.x);
+    float split2 = step(pf.x, pf.y);
+    
+    vec2 a = vec2(split1, 1);
+    vec2 b = vec2(1, split2);
+    vec2 c = vec2(0, 0);
+
+    a += pi;
+    b += pi;
+    c += pi;
+
+    a = hex2cart * a;
+    b = hex2cart * b;
+    c = hex2cart * c;
+    
+    vec2 center = (a + b + c) / 3.;
+    
+	vec2 ab = (a + b) / 2.;
+    vec2 bc = (b + c) / 2.;
+    vec2 ca = (c + a) / 2.;
+
+    return TriPoints(a, b, c, center, ab, bc, ca);
+}
+
+
+// --------------------------------------------------------
+// Geodesic tiling
+// --------------------------------------------------------
+
+struct TriPoints3D {
+	vec3 a;
+    vec3 b;
+    vec3 c;
+	vec3 center;
+    vec3 ab;
+    vec3 bc;
+    vec3 ca;
+};
+
+vec3 intersection(vec3 n, vec3 planeNormal, float planeOffset) {
+    float denominator = dot(planeNormal, n);
+    float t = (dot(vec3(0), planeNormal ) + planeOffset) / -denominator;
+    return n * t;
+}
+
+//// Edge length of an icosahedron with an inscribed sphere of radius of 1
+//float edgeLength = 1. / ((sqrt(3.) / 12.) * (3. + sqrt(5.)));
+//// Inner radius of the icosahedron's face
+//float faceRadius = (1./6.) * sqrt(3.) * edgeLength;
+const float faceRadius = 0.3819660112501051;
+
+// 2D coordinates on the icosahedron face
+vec2 icosahedronFaceCoordinates(vec3 p) {
+    vec3 pn = normalize(p);
+    vec3 i = intersection(pn, facePlane, -1.);
+    return vec2(dot(i, uPlane), dot(i, vPlane));
+}
+
+// Project 2D icosahedron face coordinates onto a sphere
+vec3 faceToSphere(vec2 facePoint) {
+	return normalize(facePlane + (uPlane * facePoint.x) + (vPlane * facePoint.y));
+}
+
+TriPoints3D geodesicTriPoints(vec3 p, float subdivisions) {
+    // Get 2D cartesian coordiantes on that face
+    vec2 uv = icosahedronFaceCoordinates(p);
+    
+    // Get points on the nearest triangle tile
+	float uvScale = subdivisions / faceRadius / 2.;
+    TriPoints points = closestTriPoints(uv * uvScale);
+    
+    // Project 2D triangle coordinates onto a sphere 
+    vec3 a = faceToSphere(points.a / uvScale);
+    vec3 b = faceToSphere(points.b / uvScale);
+    vec3 c = faceToSphere(points.c / uvScale);
+    vec3 center = faceToSphere(points.center / uvScale);
+    vec3 ab = faceToSphere(points.ab / uvScale);
+    vec3 bc = faceToSphere(points.bc / uvScale);
+    vec3 ca = faceToSphere(points.ca / uvScale);
+    
+    return TriPoints3D(a, b, c, center, ab, bc, ca);
+}
+
+
+// --------------------------------------------------------
+// Spectrum colour palette
+// IQ https://www.shadertoy.com/view/ll2GD3
+// --------------------------------------------------------
+
+vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ) {
+    return a + b*cos( 6.28318*(c*t+d) );
+}
+
+vec3 spectrum(float n) {
+    return pal( n, vec3(0.5,0.5,0.5),vec3(0.5,0.5,0.5),vec3(1.0,1.0,1.0),vec3(0.0,0.33,0.67) );
+}
+
+
+// --------------------------------------------------------
+// Model/Camera Rotation
+// --------------------------------------------------------
+
+mat3 sphericalMatrix(float theta, float phi) {
+    float cx = cos(theta);
+    float cy = cos(phi);
+    float sx = sin(theta);
+    float sy = sin(phi);
+    return mat3(
+        vec3(cy, -sy * -sx, -sy * cx),
+        vec3(0, cx, sx),
+        vec3(sy, cy * -sx, cy * cx)
+    );
+}
+
+mat3 mouseRotation(bool enable, vec2 xy) {
+//    if (enable) {
+//        vec2 mouse = iMouse.xy / iResolution.xy;
+//
+//        if (mouse.x != 0. && mouse.y != 0.) {
+//            xy.x = mouse.x;
+//            xy.y = mouse.y;
+//        }
+//    }
+    float rx, ry;
+    
+    rx = (xy.y + .5) * PI;
+    ry = (-xy.x) * 2. * PI;
+    
+    return sphericalMatrix(rx, ry);
+}
+
+mat3 modelRotation() {
+    mat3 m = mouseRotation(MOUSE_CONTROL==1, MODEL_ROTATION);
+    return m;
+}
+
+mat3 cameraRotation() {
+    mat3 m = mouseRotation(MOUSE_CONTROL==2, CAMERA_ROTATION);
+    return m;
+}
+
+
+// --------------------------------------------------------
+// Animation 
+// --------------------------------------------------------
+
+const float SCENE_DURATION = 6.;
+const float CROSSFADE_DURATION = 2.;
+
+float time(){
+	return TIME;
+}
+
+struct HexSpec {
+    float roundTop;
+    float roundCorner;
+	float height;
+    float thickness;
+    float gap;    
+};
+    
+HexSpec newHexSpec(float subdivisions) {
+	return HexSpec(
+        .05 / subdivisions,
+        .1 / subdivisions,
+        2.,
+        2.,
+        .005
+    );
+}
+    
+// Animation 1
+    
+float animSubdivisions1() {
+	return mix(2.4, 3.4, cos(time() * PI) * .5 + .5);
+}
+
+HexSpec animHex1(vec3 hexCenter, float subdivisions) {
+    HexSpec spec = newHexSpec(subdivisions);
+    
+    float offset = time() * 3. * PI;
+    offset -= subdivisions;
+    float blend = dot(hexCenter, pca);
+    blend = cos(blend * 30. + offset) * .5 + .5;
+    spec.height = mix(1.75, 2., blend);
+
+    spec.thickness = spec.height;
+
+    return spec;
+}
+
+// Animation 2
+
+float animSubdivisions2() {
+    return mix(1., 2.3, sin(time() * PI/2.) * .5 + .5);
+}
+
+HexSpec animHex2(vec3 hexCenter, float subdivisions) {
+    HexSpec spec = newHexSpec(subdivisions);
+    
+    float blend = hexCenter.y;
+    spec.height = mix(1.6, 2., sin(blend * 10. + time() * PI) * .5 + .5);
+    
+    spec.roundTop = .02 / subdivisions;
+    spec.roundCorner = .09 / subdivisions;
+    spec.thickness = spec.roundTop * 4.;
+    spec.gap = .01;
+
+    return spec;
+}
+
+// Animation 3
+
+float animSubdivisions3() {
+	return 5.;
+}
+
+HexSpec animHex3(vec3 hexCenter, float subdivisions) {
+    HexSpec spec = newHexSpec(subdivisions);
+    
+    float blend = acos(dot(hexCenter, pab)) * 10.;
+    blend = cos(blend + time() * PI) * .5 + .5;
+    spec.gap = mix(.01, .4, blend) / subdivisions;
+
+    spec.thickness = spec.roundTop * 2.;
+
+	return spec;
+}
+
+// Transition between animations
+
+float sineInOut(float t) {
+  return -0.5 * (cos(PI * t) - 1.0);
+}
+
+float transitionValues(float a, float b, float c) {
+//    #ifdef LOOP
+//        #if LOOP == 1
+//            return a;
+//        #endif
+//        #if LOOP == 2
+//            return b;
+//        #endif
+//        #if LOOP == 3
+//            return c;
+//        #endif
+//    #endif
+    float t = time() / SCENE_DURATION;
+    float scene = floor(mod(t, 3.));
+    float blend = fract(t);
+    float delay = (SCENE_DURATION - CROSSFADE_DURATION) / SCENE_DURATION;
+    blend = max(blend - delay, 0.) / (1. - delay);
+    blend = sineInOut(blend);
+    float ab = mix(a, b, blend);
+    float bc = mix(b, c, blend);
+    float cd = mix(c, a, blend);
+    float result = mix(ab, bc, min(scene, 1.));
+    result = mix(result, cd, max(scene - 1., 0.));
+    return result;
+}
+ 
+HexSpec transitionHexSpecs(HexSpec a, HexSpec b, HexSpec c) {
+    float roundTop = transitionValues(a.roundTop, b.roundTop, c.roundTop);
+    float roundCorner = transitionValues(a.roundCorner, b.roundCorner, c.roundCorner);
+	float height = transitionValues(a.height, b.height, c.height);
+    float thickness = transitionValues(a.thickness, b.thickness, c.thickness);
+    float gap = transitionValues(a.gap, b.gap, c.gap);
+	return HexSpec(roundTop, roundCorner, height, thickness, gap);
+}
+
+
+// --------------------------------------------------------
+// Modelling 
+// --------------------------------------------------------
+
+const vec3 FACE_COLOR = vec3(.9,.9,1.);
+const vec3 BACK_COLOR = vec3(.1,.1,.15);
+const vec3 BACKGROUND_COLOR = vec3(.0, .005, .03);
+
+struct Model {
+    float dist;
+    vec3 albedo;
+    float glow;
+};
+
+Model hexModel(
+    vec3 p,
+    vec3 hexCenter,
+    vec3 edgeA,
+    vec3 edgeB,
+    HexSpec spec
+) {
+    float d;
+
+    float edgeADist = dot(p, edgeA) + spec.gap;
+    float edgeBDist = dot(p, edgeB) - spec.gap;
+    float edgeDist = smax(edgeADist, -edgeBDist, spec.roundCorner);
+
+    float outerDist = length(p) - spec.height;
+    d = smax(edgeDist, outerDist, spec.roundTop);
+
+    float innerDist = length(p) - spec.height + spec.thickness;
+    d = smax(d, -innerDist, spec.roundTop);
+    
+    vec3 color;
+
+    float faceBlend = (spec.height - length(p)) / spec.thickness;
+    faceBlend = clamp(faceBlend, 0., 1.);
+    color = mix(FACE_COLOR, BACK_COLOR, step(.5, faceBlend));
+    
+    vec3 edgeColor = spectrum(dot(hexCenter, pca) * 5. + length(p) + .8);    
+	float edgeBlend = smoothstep(-.04, -.005, edgeDist);
+    color = mix(color, edgeColor, edgeBlend); 
+
+    return Model(d, color, edgeBlend);
+}
+
+// checks to see which intersection is closer
+Model opU( Model m1, Model m2 ){
+    if (m1.dist < m2.dist) {
+        return m1;
+    } else {
+        return m2;
+    }
+}
+
+Model geodesicModel(vec3 p) {
+
+    pModIcosahedron(p);
+    
+    float subdivisions = transitionValues(
+        animSubdivisions1(),
+        animSubdivisions2(),
+        animSubdivisions3()
+   	);
+	TriPoints3D points = geodesicTriPoints(p, subdivisions);
+        
+	vec3 edgeAB = normalize(cross(points.center, points.ab));
+	vec3 edgeBC = normalize(cross(points.center, points.bc));
+    vec3 edgeCA = normalize(cross(points.center, points.ca));
+    
+    Model model, part;
+    HexSpec spec;
+
+	spec = transitionHexSpecs(
+        animHex1(points.b, subdivisions),
+        animHex2(points.b, subdivisions),
+        animHex3(points.b, subdivisions)
+    );
+    part = hexModel(p, points.b, edgeAB, edgeBC, spec);
+    model = part;
+
+	spec = transitionHexSpecs(
+        animHex1(points.c, subdivisions),
+        animHex2(points.c, subdivisions),
+        animHex3(points.c, subdivisions)
+    );
+    part = hexModel(p, points.c, edgeBC, edgeCA, spec);
+    model = opU(model, part);
+    
+	spec = transitionHexSpecs(
+        animHex1(points.a, subdivisions),
+        animHex2(points.a, subdivisions),
+        animHex3(points.a, subdivisions)
+    );
+    part = hexModel(p, points.a, edgeCA, edgeAB, spec);
+    model = opU(model, part);
+    
+	return model;
+}
+
+Model map( vec3 p ){
+    mat3 m = modelRotation();
+    p *= m;  
+//    #ifndef LOOP
+//    	pR(p.xz, time * PI/16.);
+//    #endif
+    Model model = geodesicModel(p);
+    return model;
+}
+
+// --------------------------------------------------------
+// LIGHTING
+// Adapted from IQ https://www.shadertoy.com/view/Xds3zN
+// --------------------------------------------------------
+
+vec3 doLighting(Model model, vec3 pos, vec3 nor, vec3 ref, vec3 rd) {
+    vec3 lightPos = normalize(vec3(.5,.5,-1.));
+    vec3 backLightPos = normalize(vec3(-.5,-.3,1));
+    vec3 ambientPos = vec3(0,1,0);
+    
+    vec3  lig = lightPos;
+    float amb = clamp((dot(nor, ambientPos) + 1.) / 2., 0., 1.);
+    float dif = clamp( dot( nor, lig ), 0.0, 1.0 );
+    float bac = pow(clamp(dot(nor, backLightPos), 0., 1.), 1.5);
+    float fre = pow( clamp(1.0+dot(nor,rd),0.0,1.0), 2.0 );
+    
+    vec3 lin = vec3(0.0);
+    lin += 1.20 * dif * vec3(.9);
+    lin += 0.80 * amb * vec3(.5, .7, .8);
+    lin += 0.30 * bac * vec3(.25);
+    lin += 0.20 * fre * vec3(1);
+    
+    vec3 albedo = model.albedo;
+    vec3 col = mix(albedo * lin, albedo, model.glow);    
+
+    return col;
+}   
+
+
+// --------------------------------------------------------
+// Ray Marching
+// Adapted from cabbibo https://www.shadertoy.com/view/Xl2XWt
+// --------------------------------------------------------
+
+const float MAX_TRACE_DISTANCE = 8.; // max trace distance
+const float INTERSECTION_PRECISION = .06; // precision of the intersection
+const int NUM_OF_TRACE_STEPS = 15;
+const float FUDGE_FACTOR = 1.0; // Default is 1, reduce to fix overshoots
+
+struct CastRay {
+    vec3 origin;
+    vec3 direction;
+};
+
+struct Ray {
+    vec3 origin;
+    vec3 direction;
+    float len;
+};
+
+struct Hit {
+    Ray ray;
+    Model model;
+    vec3 pos;
+    bool isBackground;
+    vec3 normal;
+    vec3 color;
+};
+
+vec3 calcNormal( in vec3 pos ){
+    vec3 eps = vec3( 0.001, 0.0, 0.0 );
+    vec3 nor = vec3(
+        map(pos+eps.xyy).dist - map(pos-eps.xyy).dist,
+        map(pos+eps.yxy).dist - map(pos-eps.yxy).dist,
+        map(pos+eps.yyx).dist - map(pos-eps.yyx).dist );
+    return normalize(nor);
+}
+    
+Hit raymarch(CastRay castRay){
+
+    float currentDist = INTERSECTION_PRECISION * 2.0;
+    Model model;
+    
+    Ray ray = Ray(castRay.origin, castRay.direction, 0.);
+
+    for( int i=0; i< NUM_OF_TRACE_STEPS ; i++ ){
+        if (currentDist < INTERSECTION_PRECISION || ray.len > MAX_TRACE_DISTANCE) {
+            break;
+        }
+        model = map(ray.origin + ray.direction * ray.len);
+        currentDist = model.dist;
+        ray.len += currentDist * FUDGE_FACTOR;
+    }
+    
+    bool isBackground = false;
+    vec3 pos = vec3(0);
+    vec3 normal = vec3(0);
+    vec3 color = vec3(0);
+    
+    if (ray.len > MAX_TRACE_DISTANCE) {
+        isBackground = true;
+    } else {
+        pos = ray.origin + ray.direction * ray.len;
+        normal = calcNormal(pos);
+    }
+
+    return Hit(ray, model, pos, isBackground, normal, color);
+}
+
+
+// --------------------------------------------------------
+// Rendering
+// --------------------------------------------------------
+
+void shadeSurface(inout Hit hit){
+    
+    vec3 color = BACKGROUND_COLOR;
+    
+    if (hit.isBackground) {
+        hit.color = color;
+        return;
+    }
+
+    vec3 ref = reflect(hit.ray.direction, hit.normal);
+
+//    #ifdef DEBUG
+//        color = hit.normal * 0.5 + 0.5;
+//    #else 
+        color = doLighting(
+            hit.model,
+            hit.pos,
+            hit.normal,
+            ref,
+            hit.ray.direction
+        );
+//    #endif
+
+    hit.color = color;
+}
+
+vec3 render(Hit hit){
+    shadeSurface(hit);
+	return hit.color;
+}
+
+
+// --------------------------------------------------------
+// Camera
+// https://www.shadertoy.com/view/Xl2XWt
+// --------------------------------------------------------
+
+mat3 calcLookAtMatrix( in vec3 ro, in vec3 ta, in float roll )
+{
+    vec3 ww = normalize( ta - ro );
+    vec3 uu = normalize( cross(ww,vec3(sin(roll),cos(roll),0.0) ) );
+    vec3 vv = normalize( cross(uu,ww));
+    return mat3( uu, vv, ww );
+}
+
+void doCamera(out vec3 camPos, out vec3 camTar, out float camRoll, in float time) {
+    float dist = 5.5;
+    camRoll = 0.;
+    camTar = vec3(0,0,0);
+    camPos = vec3(0,0,-dist);
+    camPos *= cameraRotation();
+    camPos += camTar;
+}
+
+
+// --------------------------------------------------------
+// Gamma
+// https://www.shadertoy.com/view/Xds3zN
+// --------------------------------------------------------
+
+const float GAMMA = 2.2;
+
+vec3 gamma(vec3 color, float g) {
+    return pow(color, vec3(g));
+}
+
+vec3 linearToScreen(vec3 linearRGB) {
+    return gamma(linearRGB, 1.0 / GAMMA);
+}
+
+// out vec4 fragColor, in vec2 fragCoord
+void fragment( )
+{
+//    #ifdef LOOP
+//        #if LOOP == 1
+//            time = mod(time, 2.);   
+//        #endif
+//        #if LOOP == 2
+//            time = mod(time, 4.);   
+//        #endif
+//        #if LOOP == 3
+//            time = mod(time, 2.);
+//    	#endif
+//    #endif
+    
+    //initIcosahedron();
+    
+    vec2 p =VERTEX.xy*0.2;
+    //vec2 m = iMouse.xy / iResolution.xy;
+
+    vec3 camPos = vec3( 0., 0., 2.);
+    vec3 camTar = vec3( 0. , 0. , 0. );
+    float camRoll = 0.;
+    
+    // camera movement
+    doCamera(camPos, camTar, camRoll, time());
+    
+    // camera matrix
+    mat3 camMat = calcLookAtMatrix( camPos, camTar, camRoll );  // 0.0 is the camera roll
+    
+    // create view ray
+    vec3 rd = normalize( camMat * vec3(p.xy,2.0) ); // 2.0 is the lens length
+    
+    Hit hit = raymarch(CastRay(camPos, rd));
+
+    vec3 color = render(hit);
+	
+    
+//    #ifndef DEBUG
+//        color = linearToScreen(color);
+//    #endif
+	if(hit.isBackground){
+		ALPHA = .0;
+	}
+	else{
+		ALPHA = 1.0;
+	}
+    ALBEDO = color; //vec4(color,1.0);
+	EMISSION = emission_intensity * ALBEDO;
+}"
+
+[sub_resource type="ShaderMaterial" id=8]
+shader = SubResource( 7 )
+shader_param/MODEL_ROTATION = Vector2( 0.3, 0.25 )
+shader_param/CAMERA_ROTATION = Vector2( 0.5, 0.5 )
+shader_param/emission_intensity = 1.1
+shader_param/MOUSE_CONTROL = 2
+
+[node name="SphereGame" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 3 )
+
+[node name="GIProbe" type="GIProbe" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+visible = false
+subdiv = 2
+extents = Vector3( 5, 5, 5 )
+energy = 1.29
+propagation = 0.47
+bias = 0.492
+data = SubResource( 4 )
+
+[node name="CameraTarget" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+
+[node name="CameraGimbal" parent="." instance=ExtResource( 6 )]
+target = NodePath("../CameraTarget")
+disable_control = true
+mouse_control = true
+max_zoom = 1.916
+min_zoom = 0.871
+
+[node name="BakedLightmap" type="BakedLightmap" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+extents = Vector3( 5, 5, 5 )
+quality = 2
+bounces = 4
+bias = 0.01106
+environment_mode = 1
+environment_min_light = Color( 0, 0, 0.12549, 1 )
+light_data = SubResource( 5 )
+
+[node name="GuiOverlay" parent="." instance=ExtResource( 1 )]
+layer = 0
+follow_viewport_enable = true
+
+[node name="BackgroundAudioPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="SphereBody" type="RigidBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 5, 5 )
+gravity_scale = 0.0
+custom_integrator = true
+continuous_cd = true
+contacts_reported = 1
+contact_monitor = true
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+
+[node name="CollisionShape" type="CollisionShape" parent="SphereBody"]
+transform = Transform( 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="TheSphere" type="MeshInstance" parent="SphereBody"]
+mesh = SubResource( 6 )
+skeleton = NodePath("../..")
+material/0 = SubResource( 8 )
+
+[connection signal="body_entered" from="SphereBody" to="." method="_on_SphereBody_entered"]
